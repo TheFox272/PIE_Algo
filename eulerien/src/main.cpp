@@ -1,4 +1,4 @@
-#include <iostream>
+#include "main.hpp"
 
 /*----------------------------------------------------------------------------------------------------*/
 // CONSTANTES
@@ -7,7 +7,14 @@
 
 int main()
 {
-    std::cout << "Hello, World!" << std::endl;
+    Graph g;
+    g.ajouterArete(1, 2, 1);
+    g.ajouterArete(2, 3, 1);
+    g.ajouterArete(3, 4, 2);
+    g.ajouterArete(4, 1, 2);
+
+    g.afficher();
+
     return 0;
 }
 
