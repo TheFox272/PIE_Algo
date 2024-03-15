@@ -1,5 +1,11 @@
+#ifndef ORBITE_HPP_INCLUDED
+#define ORBITE_HPP_INCLUDED
+
 #include <iostream>
 #include <stdbool.h>
+#include<iostream>
+#include<vector>
+#include<array>
 
 /*----------------------------------------------------------------------------------------------------*/
 // CONSTANTES
@@ -31,8 +37,25 @@ class Graph
     private:
         int m_nbSommet;
         int m_nbAretes;
-        int m_listeAretes[];
+        int m_poidsTot;
+        vector<int> m_listeNoeuds;
+        vector<Aretes> m_listeAretes;
     public:
         Graph();
+        Graph(int nbSommet, vector<int> matriceAdjacence);
         ~Graph();
+
+        vector<vector<Aretes>> trouverChemins();
 };
+
+
+class Set
+{
+    private:
+        int m_taille;
+        vector<Aretes> m_listeAretes;
+
+    public:
+}
+
+#endif
