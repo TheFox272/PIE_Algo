@@ -1,8 +1,8 @@
 #pragma once
 
 #include <iostream>
-#include <iostream>
 #include <vector>
+#include <algorithm>
 
 /*----------------------------------------------------------------------------------------------------*/
 // Constantes
@@ -31,16 +31,16 @@ class Arete
         ~Arete();
 
         // Méthodes pour récupérer les attributs de l'arete
-        int getSommet1();
-        int getSommet2();
-        int getPoids();
-        bool getOriente();
+        int getSommet1() const;
+        int getSommet2() const;
+        int getPoids() const;
+        bool getOriente() const;
 };
 
 
-class Graph
+class Graphe
 {
-    private:
+    protected:
         // Nombre de sommets
         int m_nbSommet;
         // Nombre d'arrêtes
@@ -53,23 +53,51 @@ class Graph
         std::vector<Arete> m_listeArete;
     public:
         // Constructeur du graphe
-        Graph();
+        Graphe();
+
+        Graphe(Graphe const &g);
 
         // Destructeur du graphe
-        ~Graph();
+        ~Graphe();
 
         // Méthodes pour récupérer les attributs du graphe
-        int getNbSommet();
-        int getNbArete();
-        int getPoidsTot();
-        std::vector<int> getListeSommet();
-        std::vector<Arete> getListeArete();
+        int getNbSommet() const;
+        int getNbArete() const;
+        int getPoidsTot() const;
+        std::vector<int> getListeSommet() const;
+        std::vector<Arete> getListeArete() const;
 
         // Méthode pour ajouter une arrête
         void ajouterArete(int sommet1, int sommet2, int poids, bool oriente = false);
 
         // Méthode pour afficher le graphe (pour le debug)
-        void afficher();
+        void afficher() const;
+};
+
+
+class GrapheAugmente: public Graphe
+{
+    private:
+        // Poids total du graphe augmenté
+        int m_poidsTotAugmente;
+        // Liste des arrêtes augmentées
+        std::vector<Arete> m_listeAreteAugmente;
+    public:
+        // Constructeur du graphe augmenté, à partir d'un graphe normal qui lui sert de base
+        GrapheAugmente(Graphe g);
+
+        // Destructeur du graphe augmenté
+        ~GrapheAugmente();
+
+        // Méthodes pour récupérer les attributs du graphe augmenté
+        int getPoidsTotAugmente() const;
+        std::vector<Arete> getListeAreteAugmentee() const;
+
+        // Méthode pour ajouter une arrête augmentée
+        void ajouterAreteAugmentee(int sommet1, int sommet2, int poids, bool oriente = false);
+
+        // Méthode pour afficher le graphe augmenté (pour le debug), on surcharge la méthode de la classe mère
+        void afficher() const;
 };
 
 
