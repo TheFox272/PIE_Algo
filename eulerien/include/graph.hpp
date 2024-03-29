@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <unordered_set>
+#include <ctime>
 
 /*----------------------------------------------------------------------------------------------------*/
 // Constantes
@@ -25,7 +27,7 @@ class Arete
         bool m_oriente;
     public:
         // Constructeur de l'arete
-        Arete(int sommet1, int sommet2, int poids, bool oriente = false);
+        Arete(const int sommet1, const int sommet2, const int poids, const bool oriente=false);
 
         // Destructeur de l'arete
         ~Arete();
@@ -35,6 +37,10 @@ class Arete
         int getSommet2() const;
         int getPoids() const;
         bool getOriente() const;
+
+        // Méthode pour savoir si l'arrête est partante d'un sommet donné
+        bool partDe(int sommet) const;
+        bool vaVers(int sommet) const;
 };
 
 
@@ -42,9 +48,9 @@ class Graphe
 {
     protected:
         // Nombre de sommets
-        int m_nbSommet;
+        size_t m_nbSommet;
         // Nombre d'arrêtes
-        int m_nbArete;
+        size_t m_nbArete;
         // Poids total du graphe
         int m_poidsTot;
         // Liste des sommets
@@ -61,14 +67,14 @@ class Graphe
         ~Graphe();
 
         // Méthodes pour récupérer les attributs du graphe
-        int getNbSommet() const;
-        int getNbArete() const;
+        size_t getNbSommet() const;
+        size_t getNbArete() const;
         int getPoidsTot() const;
         std::vector<int> getListeSommet() const;
         std::vector<Arete> getListeArete() const;
 
         // Méthode pour ajouter une arrête
-        void ajouterArete(int sommet1, int sommet2, int poids, bool oriente = false);
+        void ajouterArete(int sommet1, int sommet2, int poids=1, bool oriente=false);
 
         // Méthode pour afficher le graphe (pour le debug)
         void afficher() const;
@@ -78,12 +84,15 @@ class Graphe
 class GrapheAugmente: public Graphe
 {
     private:
+        // Nombre d'arrêtes augmentées
+        size_t m_nbAreteAugmente;
         // Poids total du graphe augmenté
         int m_poidsTotAugmente;
         // Liste des arrêtes augmentées
         std::vector<Arete> m_listeAreteAugmente;
     public:
         // Constructeur du graphe augmenté, à partir d'un graphe normal qui lui sert de base
+        GrapheAugmente();
         GrapheAugmente(Graphe g);
 
         // Destructeur du graphe augmenté
@@ -92,21 +101,19 @@ class GrapheAugmente: public Graphe
         // Méthodes pour récupérer les attributs du graphe augmenté
         int getPoidsTotAugmente() const;
         std::vector<Arete> getListeAreteAugmentee() const;
+        std::vector<Arete> getListeAreteTotale() const;
 
-        // Méthode pour ajouter une arrête augmentée
-        void ajouterAreteAugmentee(int sommet1, int sommet2, int poids, bool oriente = false);
+        // Méthodes pour ajouter/supprimer une arrête augmentée
+        void augmenterArete(int sommet1, int sommet2);
+        void supprimerAreteAugmentee(int sommet1, int sommet2);
 
         // Méthode pour afficher le graphe augmenté (pour le debug), on surcharge la méthode de la classe mère
         void afficher() const;
 };
 
+/*----------------------------------------------------------------------------------------------------*/
 
-// pas besoin de cette classe, on peut utiliser un vecteur d'aretes
-// class Set
-// {
-//     private:
-//         int m_taille;
-//         std::vector<Arete> m_listeArete;
-
-//     public:
-// }
+// Renvoie un tableau correspondant à un chemin aléatoire du graphe g entre les sommets sommet_depart et sommet_arrive, s'il existe. Sinon, renvoie un tableau vide.
+// Cette fonction se base sur l'algorithme de recherche en profondeur.
+// Si augmenteOnly est à true, alors le chemin ne doit passer que par des arêtes augmentées. Sinon, il passera par des arêtes normales.
+std::vector<int> trouver_chemin_aleatoire(const GrapheAugmente &g, int sommet_depart, int sommet_arrive, bool augmenteOnly=false);

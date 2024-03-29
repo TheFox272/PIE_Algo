@@ -7,7 +7,7 @@
 
 // CLASSE ARETE
 // Constructeurs
-Arete::Arete(int sommet1, int sommet2, int poids, bool oriente): m_sommet1(sommet1), m_sommet2(sommet2), m_poids(poids), m_oriente(oriente) {}
+Arete::Arete(const int sommet1, const int sommet2, const int poids, const bool oriente): m_sommet1(sommet1), m_sommet2(sommet2), m_poids(poids), m_oriente(oriente) {}
 
 // Destructeur
 Arete::~Arete() {}
@@ -21,6 +21,15 @@ int Arete::getPoids() const { return m_poids; }
 
 bool Arete::getOriente() const { return m_oriente; }
 
+bool Arete::partDe(int sommet) const
+{
+    return (m_sommet1 == sommet || (m_sommet2 == sommet && m_oriente == false));
+}
+
+bool Arete::vaVers(int sommet) const
+{
+    return (m_sommet2 == sommet || (m_sommet1 == sommet && m_oriente == false));
+}
 
 // CLASSE Graphe
 // Constructeurs
@@ -32,9 +41,9 @@ Graphe::Graphe(Graphe const &g): m_nbSommet(g.m_nbSommet), m_nbArete(g.m_nbArete
 Graphe::~Graphe() {}
 
 // Méthodes
-int Graphe::getNbSommet() const { return m_nbSommet; }
+size_t Graphe::getNbSommet() const { return m_nbSommet; }
 
-int Graphe::getNbArete() const { return m_nbArete; }
+size_t Graphe::getNbArete() const { return m_nbArete; }
 
 int Graphe::getPoidsTot() const { return m_poidsTot; }
 
@@ -65,13 +74,13 @@ void Graphe::afficher() const
     std::cout << "Nombre d'arrêtes : " << m_nbArete << std::endl;
     std::cout << "Poids total : " << m_poidsTot << std::endl;
     std::cout << "Liste des sommets : ";
-    for (int i = 0; i < m_nbSommet; i++)
+    for (size_t i = 0; i < m_nbSommet; i++)
     {
         std::cout << m_listeSommet[i] << " ";
     }
     std::cout << std::endl;
     std::cout << "Liste des arrêtes : " << std::endl;
-    for (int i = 0; i < m_nbArete; i++)
+    for (size_t i = 0; i < m_nbArete; i++)
     {
         std::cout << "Arete " << i << " : " << m_listeArete[i].getSommet1() << " - " << m_listeArete[i].getSommet2() << " (" << m_listeArete[i].getPoids() << ")";
         if (m_listeArete[i].getOriente())
@@ -88,7 +97,8 @@ void Graphe::afficher() const
 
 // CLASSE GrapheAugmente
 // Constructeurs
-GrapheAugmente::GrapheAugmente(Graphe g): Graphe(g), m_poidsTotAugmente(0) {}
+GrapheAugmente::GrapheAugmente(): Graphe(), m_nbAreteAugmente(0), m_poidsTotAugmente(0) {}
+GrapheAugmente::GrapheAugmente(Graphe g): Graphe(g), m_nbAreteAugmente(0), m_poidsTotAugmente(0) {}
 
 // Destructeur
 GrapheAugmente::~GrapheAugmente() {}
@@ -98,11 +108,44 @@ int GrapheAugmente::getPoidsTotAugmente() const { return m_poidsTotAugmente; }
 
 std::vector<Arete> GrapheAugmente::getListeAreteAugmentee() const { return m_listeAreteAugmente; }
 
-void GrapheAugmente::ajouterAreteAugmentee(int sommet1, int sommet2, int poids, bool oriente)
+std::vector<Arete> GrapheAugmente::getListeAreteTotale() const
 {
-    m_listeAreteAugmente.push_back(Arete(sommet1, sommet2, poids, oriente));
-    m_nbArete++;
-    m_poidsTotAugmente += poids;
+    std::vector<Arete> listeAreteTotale = m_listeArete;
+    for (const Arete& arete : m_listeAreteAugmente)
+    {
+        listeAreteTotale.push_back(arete);
+    }
+    return listeAreteTotale;
+}
+
+void GrapheAugmente::augmenterArete(int sommet1, int sommet2)
+{
+    for (size_t i = 0; i < m_nbArete; i++)
+    {
+        if (m_listeArete[i].partDe(sommet1) && m_listeArete[i].vaVers(sommet2))
+        {
+            m_listeAreteAugmente.push_back(m_listeArete[i]);
+            m_poidsTotAugmente += m_listeArete[i].getPoids();
+            m_nbAreteAugmente++;
+            return;
+        }
+    }
+}
+
+void GrapheAugmente::supprimerAreteAugmentee(int sommet1, int sommet2)
+{
+    for (size_t i = 0; i < m_nbAreteAugmente; i++)
+    {
+        if (m_listeAreteAugmente[i].partDe(sommet1) && m_listeAreteAugmente[i].vaVers(sommet2))
+        {
+            m_poidsTotAugmente -= m_listeAreteAugmente[i].getPoids();
+            m_listeAreteAugmente.erase(m_listeAreteAugmente.begin() + i);
+            m_nbAreteAugmente--;
+            return;
+        }
+    }
+    // Si l'arête n'a pas été trouvée, on lève une exception
+    throw std::invalid_argument("L'arête n'a pas été trouvée dans la liste des arêtes augmentées");
 }
 
 void GrapheAugmente::afficher() const
@@ -111,13 +154,13 @@ void GrapheAugmente::afficher() const
     std::cout << "Nombre d'arrêtes : " << m_nbArete << std::endl;
     std::cout << "Poids total : " << m_poidsTot << std::endl;
     std::cout << "Liste des sommets : ";
-    for (int i = 0; i < m_nbSommet; i++)
+    for (size_t i = 0; i < m_nbSommet; i++)
     {
         std::cout << m_listeSommet[i] << " ";
     }
     std::cout << std::endl;
     std::cout << "Liste des arrêtes : " << std::endl;
-    for (int i = 0; i < m_nbArete; i++)
+    for (size_t i = 0; i < m_nbArete; i++)
     {
         std::cout << "Arete " << i << " : " << m_listeArete[i].getSommet1() << " - " << m_listeArete[i].getSommet2() << " (" << m_listeArete[i].getPoids() << ")";
         if (m_listeArete[i].getOriente())
@@ -131,9 +174,9 @@ void GrapheAugmente::afficher() const
     }
     std::cout << "Poids total augmenté : " << m_poidsTotAugmente << std::endl;
     std::cout << "Liste des arrêtes augmentées : " << std::endl;
-    for (int i = 0; i < m_nbArete; i++)
+    for (size_t i = 0; i < m_nbAreteAugmente; i++)
     {
-        std::cout << "Arete " << i << " : " << m_listeAreteAugmente[i].getSommet1() << " - " << m_listeAreteAugmente[i].getSommet2() << " (" << m_listeAreteAugmente[i].getPoids() << ")";
+        std::cout << "Arete augmentée " << i << " : " << m_listeAreteAugmente[i].getSommet1() << " - " << m_listeAreteAugmente[i].getSommet2() << " (" << m_listeAreteAugmente[i].getPoids() << ")";
         if (m_listeAreteAugmente[i].getOriente())
         {
             std::cout << " orientée" << std::endl;
@@ -145,4 +188,44 @@ void GrapheAugmente::afficher() const
     }
 }
 
+/*----------------------------------------------------------------------------------------------------*/
+// Fonctions
 
+std::vector<int> DFS(std::vector<Arete> &aretes, int sommet, int sommet_arrive, std::unordered_set<int> &visited) {
+    if (sommet == sommet_arrive)
+        return {sommet};
+    
+    visited.insert(sommet);
+    
+    // On mélanges les arêtes pour avoir un chemin aléatoire
+    std::random_shuffle(aretes.begin(), aretes.end());
+
+    for (const auto &arete : aretes)
+    {
+        if (arete.partDe(sommet))
+        {
+            int prochain_sommet = arete.getSommet1() == sommet ? arete.getSommet2() : arete.getSommet1();
+            if (visited.find(prochain_sommet) == visited.end())
+            {
+                auto chemin = DFS(aretes, prochain_sommet, sommet_arrive, visited);
+                if (!chemin.empty())
+                {
+                    chemin.insert(chemin.begin(), sommet);
+                    return chemin;
+                }
+            }
+        }
+    }
+    
+    return {};
+}
+
+std::vector<int> trouver_chemin_aleatoire(const GrapheAugmente &g, int sommet_depart, int sommet_arrive, bool augmenteOnly)
+{
+    // On initialise le générateur de nombres aléatoires de la STL
+    std::srand(unsigned(std::time(0)));
+
+    std::unordered_set<int> visited;
+    std::vector<Arete> aretes = augmenteOnly ? g.getListeAreteAugmentee() : g.getListeArete();
+    return DFS(aretes, sommet_depart, sommet_arrive, visited);
+}

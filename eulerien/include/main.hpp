@@ -1,5 +1,7 @@
 # pragma once
 
-# include "genetic.hpp"
-# include <iostream>
+#include "genetic.hpp"
+#include "eulerien.hpp"
+
+#include <iostream>
 
