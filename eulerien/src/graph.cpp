@@ -31,6 +31,13 @@ bool Arete::vaVers(int sommet) const
     return (m_sommet2 == sommet || (m_sommet1 == sommet && m_oriente == false));
 }
 
+
+// Operateur egalite :
+bool Arete::operator==(const Arete& autre) const
+{
+    return m_sommet1 == autre.m_sommet1 && m_sommet2 == autre.m_sommet2 && m_poids == autre.m_poids && m_oriente == autre.m_oriente;
+}
+
 // CLASSE Graphe
 // Constructeurs
 Graphe::Graphe(): m_nbSommet(0), m_nbArete(0), m_poidsTot(0) {}
@@ -130,6 +137,11 @@ void GrapheAugmente::augmenterArete(int sommet1, int sommet2)
             return;
         }
     }
+}
+void GrapheAugmente::augmenterArete(Arete arete)
+{
+    m_listeAreteAugmente.push_back(arete);
+    /* ajouter le poids */
 }
 
 void GrapheAugmente::supprimerAreteAugmentee(int sommet1, int sommet2)

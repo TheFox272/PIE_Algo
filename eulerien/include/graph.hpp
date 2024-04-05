@@ -41,6 +41,10 @@ class Arete
         // Méthode pour savoir si l'arrête est partante d'un sommet donné
         bool partDe(int sommet) const;
         bool vaVers(int sommet) const;
+
+        
+        // Operateur egalite :
+        bool operator==(const Arete& autre) const;
 };
 
 
@@ -78,6 +82,7 @@ class Graphe
 
         // Méthode pour afficher le graphe (pour le debug)
         void afficher() const;
+
 };
 
 
@@ -104,6 +109,7 @@ class GrapheAugmente: public Graphe
         std::vector<Arete> getListeAreteTotale() const;
 
         // Méthodes pour ajouter/supprimer une arrête augmentée
+        void augmenterArete(Arete arete);
         void augmenterArete(int sommet1, int sommet2);
         void supprimerAreteAugmentee(int sommet1, int sommet2);
 
