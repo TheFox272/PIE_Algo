@@ -232,6 +232,37 @@ std::vector<int> DFS(std::vector<Arete> &aretes, int sommet, int sommet_arrive, 
     return {};
 }
 
+/* ce code renvoie le chemin sous forme d'une suite d'aretes et non pas une suite de noeuds */
+std::vector<Arete> DFS_aretes(std::vector<Arete> &aretes, int sommet, int sommet_arrive, std::unordered_set<int> &visited) {
+    if (sommet == sommet_arrive)
+        return {};
+    
+    visited.insert(sommet);
+    
+    // On mélanges les arêtes pour avoir un chemin aléatoire
+    std::random_shuffle(aretes.begin(), aretes.end());
+
+    for (const auto &arete : aretes)
+    {
+        if (arete.partDe(sommet))
+        {
+            int prochain_sommet = arete.getSommet1() == sommet ? arete.getSommet2() : arete.getSommet1();
+            if (visited.find(prochain_sommet) == visited.end())
+            {
+                auto chemin = DFS_aretes(aretes, prochain_sommet, sommet_arrive, visited);
+                if (!chemin.empty())
+                {
+                    chemin.insert(chemin.begin(), arete);
+                    return chemin;
+                }
+            }
+        }
+    }
+    
+    return {};
+}
+
+
 std::vector<int> trouver_chemin_aleatoire(const GrapheAugmente &g, int sommet_depart, int sommet_arrive, bool augmenteOnly)
 {
     // On initialise le générateur de nombres aléatoires de la STL
@@ -240,4 +271,14 @@ std::vector<int> trouver_chemin_aleatoire(const GrapheAugmente &g, int sommet_de
     std::unordered_set<int> visited;
     std::vector<Arete> aretes = augmenteOnly ? g.getListeAreteAugmentee() : g.getListeArete();
     return DFS(aretes, sommet_depart, sommet_arrive, visited);
+}
+
+std::vector<Arete> trouver_chemin_aleatoire_aretes(const GrapheAugmente &g, int sommet_depart, int sommet_arrive, bool augmenteOnly)
+{
+    // On initialise le générateur de nombres aléatoires de la STL
+    std::srand(unsigned(std::time(0)));
+
+    std::unordered_set<int> visited;
+    std::vector<Arete> aretes = augmenteOnly ? g.getListeAreteAugmentee() : g.getListeArete();
+    return DFS_aretes(aretes, sommet_depart, sommet_arrive, visited);
 }

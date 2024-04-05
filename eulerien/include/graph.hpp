@@ -123,3 +123,5 @@ class GrapheAugmente: public Graphe
 // Cette fonction se base sur l'algorithme de recherche en profondeur.
 // Si augmenteOnly est à true, alors le chemin ne doit passer que par des arêtes augmentées. Sinon, il passera par des arêtes normales.
 std::vector<int> trouver_chemin_aleatoire(const GrapheAugmente &g, int sommet_depart, int sommet_arrive, bool augmenteOnly=false);
+std::vector<Arete> trouver_chemin_aleatoire_aretes(const GrapheAugmente &g, int sommet_depart, int sommet_arrive, bool augmenteOnly);
+

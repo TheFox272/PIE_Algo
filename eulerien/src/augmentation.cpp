@@ -44,7 +44,7 @@ GrapheAugmente augmente(Graphe& g, const int seed)
         int x = arete_choisie.getSommet1();
         int y = arete_choisie.getSommet2();
 
-        std::vector<Arete> chemin = trouver_chemin_aleatoire(aug, vhead, x);
+        std::vector<Arete> chemin = trouver_chemin_aleatoire_aretes(aug, vhead, x, false);
         for(auto arete_chemin : chemin)
         {
             auto cherche = find(S.begin(), S.end(), arete_chemin);
@@ -56,7 +56,7 @@ GrapheAugmente augmente(Graphe& g, const int seed)
         }
         vhead = y;     
     }
-    std::vector<Arete> chemin_retour = trouver_chemin_aleatoire(aug, vhead, vstart); /* il faut faire un algorithme qui renvoie une suite d'arete */
+    std::vector<Arete> chemin_retour = trouver_chemin_aleatoire_aretes(aug, vhead, vstart, false); /* il faut faire un algorithme qui renvoie une suite d'arete */
     for(auto arete_chemin : chemin_retour)
     {
             aretes_euler.push_back(arete_chemin);
