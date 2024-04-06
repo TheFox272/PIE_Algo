@@ -4,5 +4,5 @@
 
 /*----------------------------------------------------------------------------------------------------*/
 
-GrapheAugmente augmente(const Graphe g, const int seed);
+GrapheAugmente augmente(const Graphe g, const unsigned int seed);
 

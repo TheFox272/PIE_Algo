@@ -19,7 +19,8 @@ std::vector<GrapheAugmente> init_population(const Graphe g, const int taille_pop
     std::vector<GrapheAugmente> pop;
     for (int i = 0; i < taille_pop; i++)
     {
-        pop.push_back(augmente(g, i));
+        GrapheAugmente ga = augmente(g, i);
+        pop.push_back(ga);
     }
     return pop;
 }
