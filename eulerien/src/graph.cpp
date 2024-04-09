@@ -300,6 +300,38 @@ std::vector<Arete> DFS(std::vector<Arete> aretes, int sommet_actuel, int sommet_
     return {};
 }
 
+GrapheAugmente eleminer_cycle_augmente(GrapheAugmente g)
+{
+    std::vector<Arete> cycle_augmente = trouver_cycle(g, true);
+    std::vector<Arete> aretes_augmente = g.getListeAreteAugmentee();
+    int n = aretes_augmente.size();
+
+    if(cycle_augmente.size() == 0)
+    {
+        return ;
+    }
+
+    for(Arete arete_cycle : cycle_augmente)
+    {
+        for(int i = 0; i<n; ++i)
+        {
+            if(arete_cycle == aretes_augmente[i])
+            {
+                aretes_augmente.erase(aretes_augmente.begin() + i);
+            }
+        }
+    }
+
+    GrapheAugmente resultat(g);
+    
+    for(Arete arete_augmente : aretes_augmente)
+    {
+        resultat.ajouterAreteAugmentee(arete_augmente);
+    }
+
+    return resultat;
+}
+
 std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly)
 /* 
     Retourne un tableau vide si pas de cycle
