@@ -107,7 +107,59 @@ GrapheAugmente mutation_2(const GrapheAugmente g)
 
 /*----------------------------------------------------------------------------------------------------*/
 
-GrapheAugmente croisement(const GrapheAugmente g1, const GrapheAugmente g2)
+GrapheAugmente croisement(const GrapheAugmente g1, const GrapheAugmente g2, double prb)
 {
-    return g1;
+    /* On ne prend qu'un enfant */
+    std::vector<Arete> aug_1 = g1.getListeAreteAugmentee();
+    std::vector<Arete> aug_2 = g2.getListeAreteAugmentee();
+    
+    std::random_shuffle(aug_1.begin(), aug_1.end());
+    std::random_shuffle(aug_2.begin(), aug_2.end());
+
+    Graphe resultat;
+
+    if(aug_1.size()<aug_2.size())
+    {
+        for(int i = 0; i<aug_1.size(); ++i)
+        {
+            double random = static_cast<double>(rand()) / RAND_MAX;
+            if(random < prb)
+            {
+                aug_1[i] = aug_2[i];
+            }
+        }
+
+        Graphe g_graph(g1);
+        GrapheAugmente g(g_graph);
+
+        for(Arete arete : aug_1)
+        {
+            g.ajouterAreteAugmentee(arete);
+        }
+    
+        resultat = g;
+    }
+    else
+    {
+        for(int i = 0; i<aug_2.size(); ++i)
+        {
+            double random = static_cast<double>(rand()) / RAND_MAX;
+            if(random < prb)
+            {
+                aug_2[i] = aug_1[i];
+            }
+        }
+
+        Graphe g_graph(g2);
+        GrapheAugmente g(g_graph);
+
+        for(Arete arete : aug_2)
+        {
+            g.ajouterAreteAugmentee(arete);
+        }
+
+        resultat = g;
+    }
+
+    return resultat;
 }
