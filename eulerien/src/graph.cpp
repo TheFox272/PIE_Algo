@@ -187,6 +187,13 @@ void GrapheAugmente::ajouterAreteAugmentee(Arete arete)
     m_poidsTotAugmente += arete.getPoids();
     m_nbAreteAugmente++;
 }
+void GrapheAugmente::ajouterAreteAugmentee(int sommet1, int sommet2, int poids, bool oriente)
+{
+    Arete arete(sommet1, sommet2, poids, oriente);
+    m_listeAreteAugmente.push_back(arete);
+    m_poidsTotAugmente += arete.getPoids();
+    m_nbAreteAugmente++;
+}
 
 void GrapheAugmente::supprimerAreteAugmentee(Arete arete)
 {
@@ -300,7 +307,7 @@ std::vector<Arete> DFS(std::vector<Arete> aretes, int sommet_actuel, int sommet_
     return {};
 }
 
-GrapheAugmente eleminer_cycle_augmente(GrapheAugmente g)
+GrapheAugmente eliminer_cycle_augmente(GrapheAugmente g)
 {
     std::vector<Arete> cycle_augmente = trouver_cycle(g, true);
     std::vector<Arete> aretes_augmente = g.getListeAreteAugmentee();
@@ -336,7 +343,7 @@ std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly)
 /* 
     Retourne un tableau vide si pas de cycle
     Sinon retourne le chemin
- */
+*/
 {
 
     std::srand(unsigned(std::time(0)));

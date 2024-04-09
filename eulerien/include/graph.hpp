@@ -129,6 +129,7 @@ class GrapheAugmente: public Graphe
 
         // Méthodes pour ajouter/supprimer une arrête augmentée
         void ajouterAreteAugmentee(Arete arete);
+        void ajouterAreteAugmentee(int sommet1, int sommet2, int poids, bool oriente);
         void supprimerAreteAugmentee(Arete arete);
 
         // Méthode pour set le chemin eulérien
@@ -144,6 +145,9 @@ class GrapheAugmente: public Graphe
 // Cette fonction se base sur l'algorithme de recherche en profondeur.
 // Si augmenteOnly est à true, alors le chemin ne doit passer que par des arêtes augmentées. Sinon, il passera par des arêtes normales.
 std::vector<Arete> trouver_chemin_aleatoire(const GrapheAugmente &g, int sommet_depart, int sommet_arrive, bool augmenteOnly);
+std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly);
+GrapheAugmente eliminer_cycle_augmente(GrapheAugmente g);
+
 
 /*----------------------------------------------------------------------------------------------------*/
 

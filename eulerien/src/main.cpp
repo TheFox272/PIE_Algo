@@ -51,6 +51,49 @@ void test_augmente(Graphe g){
     // std::cout << std::endl;
 }
 
+void test_trouver_cycle(GrapheAugmente ga)
+{
+    std::vector<Arete> cycle_augmente =  trouver_cycle(ga,true);
+    if(cycle_augmente.size() == 0)
+    {
+        std::cout << "Pas de cycle trouve" << std::endl;
+    }
+    else
+    {
+        std::cout << "Cycle trouve :" << std::endl;
+    }
+
+    for(int i = 0; i,cycle_augmente.size(); ++i)
+    {
+        Arete arete = cycle_augmente[i];
+        std::cout << arete.getSommet1() << "->" << arete.getSommet2();
+    }
+}
+
+void test_eliminer_cycle_augmente(GrapheAugmente ga)
+{
+    std::vector<Arete> cycle_augmente =  trouver_cycle(ga,true);
+    if(cycle_augmente.size() == 0)
+    {
+        std::cout << "Pas de cycle a eliminer trouve" << std::endl;
+    }
+    else
+    {
+        std::cout << "Cycle a eliminer trouve :" << std::endl;
+    }
+
+    eliminer_cycle_augmente(ga);
+    std::vector<Arete> liste_aretes = ga.getListeArete();
+
+    std::cout << "Liste aretes : " << std::endl;
+    afficher_chemin(liste_aretes);
+
+    std::cout << "Liste aretes augmentees : " << std::endl;
+    std::vector<Arete> liste_aretes_augmentees = ga.getListeAreteAugmentee();
+    afficher_chemin(liste_aretes_augmentees);
+
+}
+
 int main()
 {
     Graphe g;
@@ -65,6 +108,18 @@ int main()
     // g.afficher();
     test_graphe_eulerien(g);
     // test_augmente(g);
+
+    /* test trouver cycle : */
+    GrapheAugmente ga = GrapheAugmente(g);
+    ga.ajouterAreteAugmentee(2,3,1, true);
+    ga.ajouterAreteAugmentee(3,4,1, true);
+    ga.ajouterAreteAugmentee(4,2,1, true);
+
+    test_trouver_cycle(ga);
+
+    /* test eliminer cycle : */
+
+    test_eliminer_cycle_augmente(ga);
 
     return 0;
 }
