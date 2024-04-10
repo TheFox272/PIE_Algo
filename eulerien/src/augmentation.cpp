@@ -13,7 +13,7 @@ void update(std::vector<Arete>& chemin, std::vector<Arete>& aretesRestantes, std
     }
 }
 
-GrapheAugmente augmente(const Graphe g, const unsigned int graine)
+GrapheAugmente augmente(const Graphe g, const unsigned int graine, std::vector<Arete> AreteAugmentees)
 {
     // On initialise le générateur de nombres aléatoires avec la graine
     std::srand(graine);
@@ -34,6 +34,7 @@ GrapheAugmente augmente(const Graphe g, const unsigned int graine)
     int x;
 
     std::vector<Arete> aretesRestantes = g.getListeArete();
+    aretesRestantes.insert(aretesRestantes.end(), AreteAugmentees.begin(), AreteAugmentees.end());
     std::vector<Arete> cheminEulerien;
     GrapheAugmente ga(g);
 

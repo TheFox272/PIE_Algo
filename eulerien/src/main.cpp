@@ -33,12 +33,12 @@ void test_chemin_arete(GrapheAugmente g, int sommet_depart, int sommet_arrive)
 }
 
 // Test de la fonction augmente
-void test_augmente(Graphe g){
-    for (int i = 0; i < 1000; i++)
+void test_augmente(GrapheAugmente g){
+    for (int i = 0; i < 10; i++)
     {
-        GrapheAugmente ga = augmente(g, i);
-        if (ga.getPoidsTotAugmente() == 1)
-            ga.afficher();
+        GrapheAugmente ga = augmente(g, i, g.getListeAreteAugmentee());
+        // if (ga.getPoidsTotAugmente() == 1)
+        ga.afficher();
     }
 
     // test_graphe_eulerien(ga);
@@ -51,8 +51,28 @@ void test_augmente(Graphe g){
     // std::cout << std::endl;
 }
 
+void test_croisement()
+{
+    Graphe g;
+    g.ajouterArete(1, 2, 1, true);
+    g.ajouterArete(2, 3);
+    g.ajouterArete(3, 4);
+    g.ajouterArete(4, 5);
+    g.ajouterArete(4, 2);
+    g.ajouterArete(5, 1);
+
+    GrapheAugmente ga1 = augmente(g, 1);
+    GrapheAugmente ga2 = augmente(g, 10);
+
+    ga1.afficher();
+    ga2.afficher();
+    GrapheAugmente res = croisement(ga1, ga2);
+    res.afficher();
+}
+
 void test_trouver_cycle(GrapheAugmente ga)
 {
+    ga.afficher();
     std::vector<Arete> cycle_augmente =  trouver_cycle(ga,true);
     if(cycle_augmente.size() == 0)
     {
@@ -63,40 +83,36 @@ void test_trouver_cycle(GrapheAugmente ga)
         std::cout << "Cycle trouve :" << std::endl;
     }
 
-    for(int i = 0; i,cycle_augmente.size(); ++i)
-    {
-        Arete arete = cycle_augmente[i];
-        std::cout << arete.getSommet1() << "->" << arete.getSommet2();
-    }
+    afficher_chemin(cycle_augmente);
 }
 
-void test_eliminer_cycle_augmente(GrapheAugmente ga)
-{
-    std::vector<Arete> cycle_augmente =  trouver_cycle(ga,true);
-    if(cycle_augmente.size() == 0)
-    {
-        std::cout << "Pas de cycle a eliminer trouve" << std::endl;
-    }
-    else
-    {
-        std::cout << "Cycle a eliminer trouve :" << std::endl;
-    }
+// void test_eliminer_cycle_augmente(GrapheAugmente ga)
+// {
+//     std::vector<Arete> cycle_augmente =  trouver_cycle(ga,true);
+//     if(cycle_augmente.size() == 0)
+//     {
+//         std::cout << "Pas de cycle a eliminer trouve" << std::endl;
+//     }
+//     else
+//     {
+//         std::cout << "Cycle a eliminer trouve :" << std::endl;
+//     }
 
-    eliminer_cycle_augmente(ga);
-    std::vector<Arete> liste_aretes = ga.getListeArete();
+//     eliminer_cycle_augmente(ga);
+//     std::vector<Arete> liste_aretes = ga.getListeArete();
 
-    std::cout << "Liste aretes : " << std::endl;
-    afficher_chemin(liste_aretes);
+//     std::cout << "Liste aretes : " << std::endl;
+//     afficher_chemin(liste_aretes);
 
-    std::cout << "Liste aretes augmentees : " << std::endl;
-    std::vector<Arete> liste_aretes_augmentees = ga.getListeAreteAugmentee();
-    afficher_chemin(liste_aretes_augmentees);
+//     std::cout << "Liste aretes augmentees : " << std::endl;
+//     std::vector<Arete> liste_aretes_augmentees = ga.getListeAreteAugmentee();
+//     afficher_chemin(liste_aretes_augmentees);
 
-}
+// }
 
 int main()
 {
-    Graphe g;
+    GrapheAugmente g;
     // On ajoute des arêtes normales
     g.ajouterArete(1, 2, 1, true);
     g.ajouterArete(2, 3);
@@ -105,21 +121,24 @@ int main()
     g.ajouterArete(4, 2);
     g.ajouterArete(5, 1);
 
+    // On ajoute des arêtes augmentées
+    g.ajouterAreteAugmentee(2, 4, 1, true);
+
     // g.afficher();
-    test_graphe_eulerien(g);
-    // test_augmente(g);
+    // test_graphe_eulerien(g);
+    // test_croisement();
 
     /* test trouver cycle : */
-    GrapheAugmente ga = GrapheAugmente(g);
-    ga.ajouterAreteAugmentee(2,3,1, true);
-    ga.ajouterAreteAugmentee(3,4,1, true);
-    ga.ajouterAreteAugmentee(4,2,1, true);
+    // GrapheAugmente ga = GrapheAugmente(g);
+    // g.ajouterAreteAugmentee(2,3,1, true);
+    // g.ajouterAreteAugmentee(3,4,1, true);
+    // g.ajouterAreteAugmentee(4,2,1, true);
 
-    test_trouver_cycle(ga);
+    // test_trouver_cycle(g);
 
-    /* test eliminer cycle : */
+    // /* test eliminer cycle : */
 
-    test_eliminer_cycle_augmente(ga);
+    // test_eliminer_cycle_augmente(ga);
 
     return 0;
 }

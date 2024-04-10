@@ -1,6 +1,7 @@
 #pragma once
 
 #include "graph.hpp"
+#include "augmentation.hpp"
 
 #include <cstdlib> // for rand() and srand()
 #include <ctime>   // for time()
