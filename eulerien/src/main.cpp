@@ -1,4 +1,7 @@
 #include "main.hpp"
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 /*----------------------------------------------------------------------------------------------------*/
 // CONSTANTES
@@ -110,6 +113,35 @@ void test_trouver_cycle(GrapheAugmente ga)
 
 // }
 
+Graphe lecture_graphe(std::ifstream& fichier)
+{
+    if(!fichier.is_open())
+    {
+        std::cerr << "Impossible d'ouvrir le fichier." << std::endl;
+    }
+
+    std::string ligne;
+    Graphe g;
+    while (std::getline(fichier, ligne))
+    {
+        std::istringstream iss(ligne);
+        int noeud1;
+        int noeud2;
+        double poids;
+        bool oriente;
+        if (iss >> noeud1 >> noeud2 >> poids >> oriente) {
+                g.ajouterArete(noeud1, noeud2, poids, oriente);
+        }
+        else {
+                std::cerr << "Erreur de lecture sur la ligne : " << ligne << std::endl;
+        }
+
+    }
+
+    fichier.close();
+    return g;
+}
+
 int main()
 {
     GrapheAugmente g;
@@ -137,8 +169,16 @@ int main()
     // test_trouver_cycle(g);
 
     // /* test eliminer cycle : */
-
     // test_eliminer_cycle_augmente(ga);
+
+    /* test de lecture */
+    std::ifstream fichier("graphe.txt");
+    Graphe g = lecture_graphe(fichier);
+    g.afficher();
+
+    /* augmentation du graphe */
+    GrapheAugmente g_aug = augmente(g, 238);
+    g_aug.afficher();
 
     return 0;
 }
