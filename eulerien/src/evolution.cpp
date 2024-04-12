@@ -123,7 +123,7 @@ GrapheAugmente croisement(const GrapheAugmente g1, const GrapheAugmente g2)
 
     GrapheAugmente res(g1, false);
 
-    size_t m = std::max(aug_1.size(), aug_2.size());
+    size_t m = std::min(aug_1.size(), aug_2.size());  // ou max ???
     for (size_t i=0 ; i<m ; i++){
         double random = static_cast<double>(rand()) / RAND_MAX;
         if (random < prb){
