@@ -1,8 +1,9 @@
+
 #pragma once
 
 #include "graph.hpp"
 
 /*----------------------------------------------------------------------------------------------------*/
 
-GrapheAugmente augmente(const Graphe g, const unsigned int graine, std::vector<Arete> AreteAugmentees=std::vector<Arete>());
-
+std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly);
+GrapheAugmente eliminer_cycle_augmente(GrapheAugmente g);

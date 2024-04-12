@@ -117,6 +117,7 @@ class GrapheAugmente: public Graphe
         // Constructeur du graphe augmenté, à partir d'un graphe normal qui lui sert de base
         GrapheAugmente();
         GrapheAugmente(Graphe g);
+        GrapheAugmente(GrapheAugmente const &g, bool copieAreteAugmente=true);
 
         // Destructeur du graphe augmenté
         ~GrapheAugmente();
@@ -145,9 +146,6 @@ class GrapheAugmente: public Graphe
 // Cette fonction se base sur l'algorithme de recherche en profondeur.
 // Si augmenteOnly est à true, alors le chemin ne doit passer que par des arêtes augmentées. Sinon, il passera par des arêtes normales.
 std::vector<Arete> trouver_chemin_aleatoire(const GrapheAugmente &g, int sommet_depart, int sommet_arrive, bool augmenteOnly);
-std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly);
-GrapheAugmente eliminer_cycle_augmente(GrapheAugmente g);
-
 
 /*----------------------------------------------------------------------------------------------------*/
 
