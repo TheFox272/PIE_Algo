@@ -2,41 +2,29 @@
 
 /*----------------------------------------------------------------------------------------------------*/
 
-int trouver_arete(const std::vector<Arete> &aretes, int depart)
+size_t trouver_arete_partante_aleatoire(std::vector<Arete> &aretes, int sommet)
 {
+    std::random_shuffle(aretes.begin(), aretes.end());
     for (size_t i = 0; i < aretes.size(); i++)
     {
-        if (aretes[i].partDe(depart))
-        {
+        if (aretes[i].partDe(sommet))
             return i;
-        }
     }
     return -1;
 }
 
 std::vector<int> obtenir_chemin_eulerien(GrapheAugmente &g, int sommet_depart)
 {
-    // Initialisation
+    // // On initialise le générateur de nombres aléatoires
+    // std::srand(unsigned(std::time(0)));
+
+    // std::vector<Arete> aretes = g.getListeAreteTotale();
     std::vector<int> chemin;
-    std::vector<Arete> aretes = g.getListeAreteTotale();
 
-    chemin.push_back(sommet_depart);
-    int sommet_actuel = sommet_depart;
+    // chemin.push_back(sommet_depart);
+    // int sommet_actuel = sommet_depart;
 
-    while (aretes.size() > 0)
-    {
-        int i = trouver_arete(aretes, sommet_actuel);
-        if (i == -1)
-        {
-            return std::vector<int>();
-        }
-        else
-        {
-            chemin.push_back(aretes[i].getSommet2());
-            sommet_actuel = aretes[i].getSommet2();
-            aretes.erase(aretes.begin() + i);
-        }
-    }
+    //TODO: algorithme de Hierholzer
 
     return chemin;
 }

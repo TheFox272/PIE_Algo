@@ -2,81 +2,108 @@
 
 /*----------------------------------------------------------------------------------------------------*/
 
-GrapheAugmente augmente(Graphe& g, const int seed)
+void update(std::vector<Arete>& chemin, std::vector<Arete>& aretesRestantes, std::vector<Arete>& cheminEulerien)
 {
-    /* Code de la partie "INITIALIZE THE POPULATION "*/
-    std::vector<int> listeSommet = g.getListeSommet();
-    int rand_start = std::rand() % listeSommet.size();
-    int rand_end = std::rand() % listeSommet.size();
-
-    int vstart = listeSommet[rand_start];
-    int vhead = listeSommet[rand_end];
-
-    std::vector<Arete> aretes_euler;
-    std::vector<Arete> S = g.getListeArete();
-        GrapheAugmente aug(g);
-
-
-    while(S.size() > 0)
+    for(const Arete& arete : chemin)
     {
-        Arete arete_choisie(0,0,0);
+        auto iArete = std::find(aretesRestantes.begin(), aretesRestantes.end(), arete);
+        if(iArete != aretesRestantes.end())
+            aretesRestantes.erase(iArete);
+        cheminEulerien.push_back(arete);
+    }
+}
+
+GrapheAugmente augmente(const Graphe g, const unsigned int graine, std::vector<Arete> AreteAugmentees)
+{
+    // On initialise le générateur de nombres aléatoires avec la graine
+    std::srand(graine);
+
+    if (g.getNbSommet() < 2)
+    {
+        std::cerr << "Le graphe doit contenir au moins 2 sommets" << std::endl;
+        return GrapheAugmente();
+    }
+
+    std::vector<int> listeSommet = g.getListeSommet();
+    int rand_vstart = std::rand() % listeSommet.size();
+    // On s'assure que vhend != vstart
+    int rand_vend = (rand_vstart + (std::rand() % (listeSommet.size() - 1)) + 1) % listeSommet.size();
+
+    int vstart = listeSommet[rand_vstart];
+    int vhead = listeSommet[rand_vend];
+    int x;
+
+    std::vector<Arete> aretesRestantes = g.getListeArete();
+    aretesRestantes.insert(aretesRestantes.end(), AreteAugmentees.begin(), AreteAugmentees.end());
+    std::vector<Arete> cheminEulerien;
+    GrapheAugmente ga(g);
+
+    std::vector<Arete> chemin = trouver_chemin_aleatoire(ga, vstart, vhead, false);
+    update(chemin, aretesRestantes, cheminEulerien);
+
+    while(!aretesRestantes.empty())
+    {        
+        Arete arete_choisie;
         bool tous_incidents = true;
         std::vector<Arete> aretes_non_incidentes;
-        for(auto arete_S : S)
+        for(const Arete& arete : aretesRestantes)
         {
-            if(!(arete_S.vaVers(vstart)))
+            if(!(arete.incident(vhead)))
             {
-                aretes_non_incidentes.push_back(arete_S);
+                aretes_non_incidentes.push_back(arete);
                 tous_incidents = false;
             }
         }
 
         if(tous_incidents)
         {
-            int rand_arete = rand() % S.size();
-            arete_choisie = S[rand_arete];
+            int rand_arete = std::rand() % aretesRestantes.size();
+            arete_choisie = aretesRestantes[rand_arete];
+            x = arete_choisie.sommetOppose(vhead);
         }
         else
         {
             int rand_arete = rand() % aretes_non_incidentes.size();
             arete_choisie = aretes_non_incidentes[rand_arete];
+            x = arete_choisie.getSommet1();
         }
-        int x = arete_choisie.getSommet1();
-        int y = arete_choisie.getSommet2();
 
-        std::vector<Arete> chemin = trouver_chemin_aleatoire_aretes(aug, vhead, x, false);
-        for(auto arete_chemin : chemin)
+        std::vector<Arete> cheminHead = trouver_chemin_aleatoire(ga, vhead, x, false);
+
+        // Si le chemin termine déjà par l'arête choisie, on ne la rajoute pas (on évite un allez-retour inutile)
+        if(cheminHead.back() != arete_choisie){
+            cheminHead.push_back(arete_choisie);
+            vhead = arete_choisie.sommetOppose(x);
+        }
+        else
         {
-            auto cherche = find(S.begin(), S.end(), arete_chemin);
-            if(cherche != chemin.end())
-            {
-                S.erase(cherche);
-                aretes_euler.push_back(arete_chemin);
-            }
+            vhead = x;
         }
-        vhead = y;     
-    }
-    std::vector<Arete> chemin_retour = trouver_chemin_aleatoire_aretes(aug, vhead, vstart, false); /* il faut faire un algorithme qui renvoie une suite d'arete */
-    for(auto arete_chemin : chemin_retour)
-    {
-            aretes_euler.push_back(arete_chemin);
+
+        update(cheminHead, aretesRestantes, cheminEulerien);
     }
 
-    for(auto arete1 : aretes_euler)
+    // On rajoute le chemin de retour pour fermer le cycle
+    std::vector<Arete> chemin_retour = trouver_chemin_aleatoire(ga, vhead, vstart, false);
+    for(const Arete& arete_chemin : chemin_retour)
     {
-        int compteur = 0;
-        for(auto arete2 : aretes_euler)
+        cheminEulerien.push_back(arete_chemin);
+    }
+
+    // On ajoute les arêtes augmentées (ou l'on passe plusieurs fois)
+    for(size_t i=0 ; i < cheminEulerien.size() ; i++)
+    {
+        for(size_t j=i+1 ; j < cheminEulerien.size() ; j++)
         {
-            if(arete2 == arete1)
+            if(cheminEulerien[i] == cheminEulerien[j] || cheminEulerien[i] == -cheminEulerien[j])
             {
-                ++compteur;
-            }
-
-            if(compteur > 1)
-            {
-                aug.augmenterArete(arete1);
+                ga.ajouterAreteAugmentee(cheminEulerien[i]);
+                break;
             }
         }
     }
 
+    ga.setCheminEulerien(cheminEulerien);
+
+    return ga;
 }

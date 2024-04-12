@@ -11,9 +11,7 @@
 
 /*----------------------------------------------------------------------------------------------------*/
 
-/*
-Classe représentant une arrête ou un arc
-*/
+// Classe représentant une arête ou un arc
 class Arete
 {
     private:
@@ -26,8 +24,10 @@ class Arete
         // Indique si l'arrête peut être parcourue dans les deux sens ou pas
         bool m_oriente;
     public:
-        // Constructeur de l'arete
+        // Constructeurs de l'arete
+        Arete();
         Arete(const int sommet1, const int sommet2, const int poids, const bool oriente=false);
+        Arete(const Arete& autre);
 
         // Destructeur de l'arete
         ~Arete();
@@ -38,13 +38,29 @@ class Arete
         int getPoids() const;
         bool getOriente() const;
 
-        // Méthode pour savoir si l'arrête est partante d'un sommet donné
-        bool partDe(int sommet) const;
-        bool vaVers(int sommet) const;
+        // Méthode pour set l'orientation de l'arrête
+        void setOriente(bool oriente);
 
+        // Méthode pour savoir si l'arrête est partante d'un sommet donné
+        bool partDe(const int sommet) const;
+        bool vaVers(const int sommet) const;
+
+        // Méthode pour savoir si un sommet est incident à l'arrête
+        bool incident(const int sommet) const;
+
+        // Méthode pour donner le sommet opposé à un sommet donné, renvoie -1 si le sommet n'est pas sur l'arrête
+        int sommetOppose(const int sommet) const;
+
+        // Méthode pour savoir si l'arrête est nulle
+        bool estNulle() const;
+
+        // Opérateur de comparaison
+        // Renvoie true si les deux arrêtes possèdent le même poids et les mêmes sommets, et qu'elles sont orientées de la même manière (ou qu'une des deux est non orientée)
+        bool operator == (const Arete& autre) const;
+        bool operator != (const Arete& autre) const;
         
-        // Operateur egalite :
-        bool operator==(const Arete& autre) const;
+        // Opérateur unaire de négation
+        Arete operator - () const;
 };
 
 
@@ -95,10 +111,13 @@ class GrapheAugmente: public Graphe
         int m_poidsTotAugmente;
         // Liste des arrêtes augmentées
         std::vector<Arete> m_listeAreteAugmente;
+        // Chemin eulérien
+        std::vector<Arete> m_cheminEulerien;
     public:
         // Constructeur du graphe augmenté, à partir d'un graphe normal qui lui sert de base
         GrapheAugmente();
         GrapheAugmente(Graphe g);
+        GrapheAugmente(GrapheAugmente const &g, bool copieAreteAugmente=true);
 
         // Destructeur du graphe augmenté
         ~GrapheAugmente();
@@ -107,11 +126,15 @@ class GrapheAugmente: public Graphe
         int getPoidsTotAugmente() const;
         std::vector<Arete> getListeAreteAugmentee() const;
         std::vector<Arete> getListeAreteTotale() const;
+        std::vector<Arete> getCheminEulerien() const;
 
         // Méthodes pour ajouter/supprimer une arrête augmentée
-        void augmenterArete(Arete arete);
-        void augmenterArete(int sommet1, int sommet2);
-        void supprimerAreteAugmentee(int sommet1, int sommet2);
+        void ajouterAreteAugmentee(Arete arete);
+        void ajouterAreteAugmentee(int sommet1, int sommet2, int poids, bool oriente);
+        void supprimerAreteAugmentee(Arete arete);
+
+        // Méthode pour set le chemin eulérien
+        void setCheminEulerien(std::vector<Arete> chemin);
 
         // Méthode pour afficher le graphe augmenté (pour le debug), on surcharge la méthode de la classe mère
         void afficher() const;
@@ -122,6 +145,9 @@ class GrapheAugmente: public Graphe
 // Renvoie un tableau correspondant à un chemin aléatoire du graphe g entre les sommets sommet_depart et sommet_arrive, s'il existe. Sinon, renvoie un tableau vide.
 // Cette fonction se base sur l'algorithme de recherche en profondeur.
 // Si augmenteOnly est à true, alors le chemin ne doit passer que par des arêtes augmentées. Sinon, il passera par des arêtes normales.
-std::vector<int> trouver_chemin_aleatoire(const GrapheAugmente &g, int sommet_depart, int sommet_arrive, bool augmenteOnly=false);
-std::vector<Arete> trouver_chemin_aleatoire_aretes(const GrapheAugmente &g, int sommet_depart, int sommet_arrive, bool augmenteOnly);
+std::vector<Arete> trouver_chemin_aleatoire(const GrapheAugmente &g, int sommet_depart, int sommet_arrive, bool augmenteOnly);
 
+/*----------------------------------------------------------------------------------------------------*/
+
+// Utile pour le debug, affiche un chemin
+void afficher_chemin(const std::vector<Arete> &chemin);

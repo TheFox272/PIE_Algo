@@ -3,13 +3,14 @@
 /*----------------------------------------------------------------------------------------------------*/
 // Constantes
 
+// Probabilité de choisir la mutation 1 (plutôt que la mutation 2)
 #define PROBA_1 1.0
 
 /*----------------------------------------------------------------------------------------------------*/
 
 GrapheAugmente mutation(const GrapheAugmente g)
 {
-    double random = (double)rand() / RAND_MAX;
+    double random = (double)std::rand() / RAND_MAX;
     if (random < PROBA_1)
     {
         return mutation_1(g);
@@ -23,32 +24,34 @@ GrapheAugmente mutation(const GrapheAugmente g)
 
 /*----------------------------------------------------------------------------------------------------*/
 
-GrapheAugmente mutation_1(const GrapheAugmente g) {
+GrapheAugmente mutation_1(const GrapheAugmente g)
+{
     // On initialise le générateur de nombres aléatoires
     std::srand(unsigned(std::time(0)));
 
     // Récupérer les sommets du graphe augmenté
     std::vector<Arete> aretes = g.getListeAreteAugmentee();
 
-    if (aretes.empty())
+    const size_t nbArete = aretes.size();
+
+    if (nbArete < 2)
     {
         return g;
     }
 
-    std::vector<int> chemin1;
+    std::vector<Arete> chemin;
 
     // On choisit une arête augmentée aléatoire
-    int areteActuelle = rand() % aretes.size();
-    int sommet_depart = aretes[areteActuelle].getSommet1();
-    int sommet_arrive = aretes[areteActuelle].getSommet2();
+    int iAreteActuelle = std::rand() % aretes.size();
+    chemin.push_back(aretes[iAreteActuelle]);
+    int sommet_depart = chemin[0].getSommet1();
+    int sommet_arrive = chemin[0].getSommet2();
 
-    chemin1.push_back(sommet_depart);
-    chemin1.push_back(sommet_arrive);
-    aretes.erase(aretes.begin() + areteActuelle);
+    // On supprime l'arête choisie de la liste des arêtes
+    aretes.erase(aretes.begin() + iAreteActuelle);
 
     // On continue le DFS au travers des arêtes augmentées, pendant un nombre d'itérations aléatoire
-    size_t nbIterations = rand() % aretes.size();
-    std::cout << "Nombre d'itérations : " << nbIterations << std::endl;
+    size_t nbIterations = std::rand() % aretes.size();
     for (size_t i = 0; i < nbIterations; i++)
     {   
         // On mélange les arêtes pour avoir un chemin aléatoire
@@ -59,10 +62,14 @@ GrapheAugmente mutation_1(const GrapheAugmente g) {
         {
             if (aretes[j].partDe(sommet_arrive))
             {
-                int prochain_sommet = aretes[j].getSommet1() == sommet_arrive ? aretes[j].getSommet2() : aretes[j].getSommet1();
                 trouve = true;
+
+                int prochain_sommet = aretes[j].sommetOppose(sommet_arrive);
+                Arete nouvelleArete(sommet_arrive, prochain_sommet, aretes[j].getPoids(), aretes[j].getOriente());
                 sommet_arrive = prochain_sommet;
-                chemin1.push_back(sommet_arrive);
+
+                chemin.push_back(nouvelleArete);
+
                 aretes.erase(aretes.begin() + j);
                 break;
             }
@@ -74,45 +81,18 @@ GrapheAugmente mutation_1(const GrapheAugmente g) {
     }
 
     // Trouver un chemin aléatoire entre les deux sommets passant uniquement par des arêtes normales
-    std::vector<int> chemin2 = trouver_chemin_aleatoire(g, sommet_depart, sommet_arrive, false);
-
-    // Afficher les deux chemins, pour le debug
-    std::cout << "Chemin 1 : ";
-    for (size_t i = 0; i < chemin1.size(); i++)
-    {
-        std::cout << chemin1[i] << "->";
-    }
-    std::cout << std::endl;
-
-    std::cout << "Chemin 2 : ";
-    for (size_t i = 0; i < chemin2.size(); i++)
-    {
-        std::cout << chemin2[i] << "->";
-    }
-    std::cout << std::endl;
+    std::vector<Arete> chemin_alternatif = trouver_chemin_aleatoire(g, sommet_depart, sommet_arrive, false);
 
     // Créer une copie du graphe augmenté
     GrapheAugmente nouveauGraphe(g);
 
     // Supprimer les arêtes du graphe augmenté qui sont dans le chemin
-    for (size_t i = 0; i < chemin1.size() - 1; ++i) {
-        int sommet1 = chemin1[i];
-        int sommet2 = chemin1[i + 1];
-        nouveauGraphe.supprimerAreteAugmentee(sommet1, sommet2);
-    }
+    for (size_t i = 0 ; i < chemin.size() ; i++)
+        nouveauGraphe.supprimerAreteAugmentee(chemin[i]);
 
     // Ajouter au graphe augmenté de nouvelles arêtes entre les deux sommets
-    for (size_t i = 0; i < chemin2.size() - 1; ++i) {
-        int sommet1 = chemin2[i];
-        int sommet2 = chemin2[i + 1];
-        nouveauGraphe.augmenterArete(sommet1, sommet2);
-    }
-
-    // // Affcichage des deux graphes, pour le debug
-    // std::cout << "Graphe original : " << std::endl;
-    // g.afficher();
-    // std::cout << "Graphe muté : " << std::endl;
-    // nouveauGraphe.afficher();
+    for (size_t i = 0 ; i < chemin_alternatif.size() ; i++)
+        nouveauGraphe.ajouterAreteAugmentee(chemin_alternatif[i]);
 
     return nouveauGraphe;
 }
@@ -129,5 +109,36 @@ GrapheAugmente mutation_2(const GrapheAugmente g)
 
 GrapheAugmente croisement(const GrapheAugmente g1, const GrapheAugmente g2)
 {
-    return g1;
+    double prb = 0.5;
+
+    // On initialise le générateur de nombres aléatoires
+    std::srand(unsigned(std::time(0)));
+
+    /* On ne prend qu'un enfant */
+    std::vector<Arete> aug_1 = g1.getListeAreteAugmentee();
+    std::vector<Arete> aug_2 = g2.getListeAreteAugmentee();
+    
+    std::random_shuffle(aug_1.begin(), aug_1.end());
+    std::random_shuffle(aug_2.begin(), aug_2.end());
+
+    GrapheAugmente res(g1, false);
+
+    size_t m = std::max(aug_1.size(), aug_2.size());
+    for (size_t i=0 ; i<m ; i++){
+        double random = static_cast<double>(rand()) / RAND_MAX;
+        if (random < prb){
+            if (i < aug_1.size()){
+                res.ajouterAreteAugmentee(aug_1[i]);
+            }
+        }
+        else{
+            if (i < aug_2.size()){
+                res.ajouterAreteAugmentee(aug_2[i]);
+            }
+        }
+    }
+
+    res = augmente(res, rand(), res.getListeAreteAugmentee());
+
+    return res;
 }
