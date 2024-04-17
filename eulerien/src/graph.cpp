@@ -96,7 +96,7 @@ Arete Arete::operator - () const
 // Constructeurs
 Graphe::Graphe(): m_nbSommet(0), m_nbArete(0), m_poidsTot(0) {}
 
-Graphe::Graphe(Graphe const &g): m_nbSommet(g.m_nbSommet), m_nbArete(g.m_nbArete), m_poidsTot(g.m_poidsTot), m_listeSommet(g.m_listeSommet), m_listeArete(g.m_listeArete) {}
+Graphe::Graphe(Graphe const &g): m_nbSommet(g.m_nbSommet), m_nbArete(g.m_nbArete), m_poidsTot(g.m_poidsTot), m_listeSommet(g.m_listeSommet), m_listeArete(g.m_listeArete), m_matriceAdj(g.m_matriceAdj) {}
 
 // Destructeur
 Graphe::~Graphe() {}
@@ -112,20 +112,39 @@ std::vector<int> Graphe::getListeSommet() const { return m_listeSommet; }
 
 std::vector<Arete> Graphe::getListeArete() const { return m_listeArete; }
 
+std::vector<std::vector<std::pair<int, int>>> Graphe::getMatriceAdj() const { return m_matriceAdj; }
+
+void Graphe::ajouterSommet(int sommet)
+{
+    if (std::find(m_listeSommet.begin(), m_listeSommet.end(), sommet) == m_listeSommet.end())
+    {
+        m_listeSommet.push_back(sommet);
+        for (size_t i = 0; i < m_nbSommet; i++)
+        {
+            m_matriceAdj[i].push_back(std::make_pair(0, 0));
+        }
+        m_nbSommet++;
+        m_matriceAdj.push_back(std::vector<std::pair<int, int>>(m_nbSommet, std::make_pair(0, 0)));
+    }
+}
+
 void Graphe::ajouterArete(int sommet1, int sommet2, int poids, bool oriente)
 {
     m_listeArete.push_back(Arete(sommet1, sommet2, poids, oriente));
     m_nbArete++;
     m_poidsTot += poids;
-    if (std::find(m_listeSommet.begin(), m_listeSommet.end(), sommet1) == m_listeSommet.end())
+    ajouterSommet(sommet1);
+    ajouterSommet(sommet2);
+    
+    // On met à jour la matrice d'adjacence
+    int i = std::find(m_listeSommet.begin(), m_listeSommet.end(), sommet1) - m_listeSommet.begin();
+    int j = std::find(m_listeSommet.begin(), m_listeSommet.end(), sommet2) - m_listeSommet.begin();
+    m_matriceAdj[i][j].first = poids;
+    m_matriceAdj[i][j].second++;
+    if (!oriente)
     {
-        m_listeSommet.push_back(sommet1);
-        m_nbSommet++;
-    }
-    if (std::find(m_listeSommet.begin(), m_listeSommet.end(), sommet2) == m_listeSommet.end())
-    {
-        m_listeSommet.push_back(sommet2);
-        m_nbSommet++;
+        m_matriceAdj[j][i].first = poids;
+        m_matriceAdj[j][i].second++;
     }
 }
 
@@ -197,13 +216,21 @@ void GrapheAugmente::ajouterAreteAugmentee(Arete arete)
     m_listeAreteAugmente.push_back(arete);
     m_poidsTotAugmente += arete.getPoids();
     m_nbAreteAugmente++;
+
+    // On met à jour la matrice d'adjacence
+    int i = std::find(m_listeSommet.begin(), m_listeSommet.end(), arete.getSommet1()) - m_listeSommet.begin();
+    int j = std::find(m_listeSommet.begin(), m_listeSommet.end(), arete.getSommet2()) - m_listeSommet.begin();
+    m_matriceAdj[i][j].second++;
+    if (!arete.getOriente())
+    {
+        m_matriceAdj[j][i].second++;
+    }
 }
+
 void GrapheAugmente::ajouterAreteAugmentee(int sommet1, int sommet2, int poids, bool oriente)
 {
     Arete arete(sommet1, sommet2, poids, oriente);
-    m_listeAreteAugmente.push_back(arete);
-    m_poidsTotAugmente += arete.getPoids();
-    m_nbAreteAugmente++;
+    ajouterAreteAugmentee(arete);
 }
 
 void GrapheAugmente::supprimerAreteAugmentee(Arete arete)
@@ -215,6 +242,16 @@ void GrapheAugmente::supprimerAreteAugmentee(Arete arete)
         m_poidsTotAugmente -= it->getPoids();
         m_listeAreteAugmente.erase(it);
         m_nbAreteAugmente--;
+
+        // On met à jour la matrice d'adjacence
+        int i = std::find(m_listeSommet.begin(), m_listeSommet.end(), arete.getSommet1()) - m_listeSommet.begin();
+        int j = std::find(m_listeSommet.begin(), m_listeSommet.end(), arete.getSommet2()) - m_listeSommet.begin();
+        m_matriceAdj[i][j].second--;
+        if (!arete.getOriente())
+        {
+            m_matriceAdj[j][i].second--;
+        }
+
         return;
     }
 

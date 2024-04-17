@@ -74,6 +74,9 @@ std::vector<GrapheAugmente> reproduction(const std::vector<GrapheAugmente>& pop,
         pop_reproduction.push_back(enfant);
     }
 
+    // Eliminer cycles
+    // WIP...
+
     return pop_reproduction;
 }
 

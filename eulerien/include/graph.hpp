@@ -73,10 +73,12 @@ class Graphe
         size_t m_nbArete;
         // Poids total du graphe
         int m_poidsTot;
-        // Liste des sommets
+        // Liste des sommets, permet la correspondance entre l'identifiant du sommet et son indice dans la matrice d'adjacence
         std::vector<int> m_listeSommet;
         // Liste des arrêtes
         std::vector<Arete> m_listeArete;
+        // Matrice d'adjacence, chaque coordonnée (i,j) contient un coupe (p, k) ou k est le nombre d'arrêtes entre i et j, de poids p
+        std::vector<std::vector<std::pair<int, int>>> m_matriceAdj;
     public:
         // Constructeur du graphe
         Graphe();
@@ -92,9 +94,12 @@ class Graphe
         int getPoidsTot() const;
         std::vector<int> getListeSommet() const;
         std::vector<Arete> getListeArete() const;
+        std::vector<std::vector<std::pair<int, int>>> getMatriceAdj() const;
 
-        // Méthode pour ajouter une arrête
+        // Méthode pour ajouter une arête
         void ajouterArete(int sommet1, int sommet2, int poids=1, bool oriente=false);
+        // Méthode pour ajouter un sommet
+        void ajouterSommet(int sommet);
 
         // Méthode pour afficher le graphe (pour le debug)
         void afficher() const;

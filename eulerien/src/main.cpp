@@ -23,6 +23,13 @@ void test_graphe_eulerien(Graphe g)
     GrapheAugmente ga = generer_graphe_eulerien(g, 5, 20, 0.6, 0.7);
     ga.afficher();
 
+    std::vector<int> chemin = hierholzer(ga, 1);
+    std::cout << "Chemin : ";
+    for (size_t i = 0; i < chemin.size(); i++)
+    {
+        std::cout << chemin[i] << "->";
+    }
+    std::cout << std::endl;
 }
 
 // Test recherche de chemin eulérien arete
@@ -83,6 +90,7 @@ void test_hierholzer(GrapheAugmente g)
     }
     std::cout << std::endl;
 }
+
 void test_trouver_cycle(GrapheAugmente ga)
 {
     std::vector<Arete> cycle_augmente =  trouver_cycle(ga,true);
@@ -165,46 +173,7 @@ int main()
     g.ajouterArete(4, 2);
     g.ajouterArete(5, 1);
 
-    // g.afficher();
-    //test_graphe_eulerien(g);
-    // test_augmente(g);
-
-    /* test trouver cycle : */
-    GrapheAugmente ga = GrapheAugmente(g);
-    ga.ajouterAreteAugmentee(2,3,1, true);
-    ga.ajouterAreteAugmentee(3,4,1, true);
-    ga.ajouterAreteAugmentee(5,1,1, true);
-
-    test_trouver_cycle(ga);
     
-    // test eliminer cycle :
-    //test_eliminer_cycle_augmente(ga);
-    
-    // test de lecture
-    std::ifstream fichier("..\\..\\extraction\\graphe.txt");
-    Graphe g_read = lecture_graphe(fichier);
-    g_read.afficher();
-
-    // augmentation du graphe
-    std::cout << "Augmentation du graphe :" << std::endl;
-    GrapheAugmente g_aug = augmente(g_read, 238);
-    g_aug.afficher();
-
-    // Croisement :
-    std::cout << "Test de croisement :" << std::endl;
-    GrapheAugmente ga_bis = GrapheAugmente(g);
-    ga_bis.ajouterAreteAugmentee(1,2,1, true);
-    ga_bis.ajouterAreteAugmentee(4,2,1, true);
-    ga_bis.ajouterAreteAugmentee(5,1,1, true);
-
-    ga.afficher();
-    ga_bis.afficher();
-
-    std::cout << "ENFANT" << std::endl;
-    GrapheAugmente enfant = croisement(ga, ga_bis);
-    enfant.afficher();
-    
-    std::cout << "FIN DU PROGRAMME" << std::endl;
 
     return 0;
 }
