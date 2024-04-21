@@ -110,6 +110,10 @@ void test_eliminer_cycle_augmente(GrapheAugmente ga)
         std::cout << "Cycle a eliminer trouve :" << std::endl;
     }
 
+    eliminer_cycles_augmentes(ga);
+
+    ga.afficher();
+/*
     GrapheAugmente ga_modifie = eliminer_cycle_augmente(ga);
     std::vector<Arete> liste_aretes = ga_modifie.getListeArete();
 
@@ -119,7 +123,7 @@ void test_eliminer_cycle_augmente(GrapheAugmente ga)
     std::cout << "Liste aretes augmentees : " << std::endl;
     std::vector<Arete> liste_aretes_augmentees = ga_modifie.getListeAreteAugmentee();
     afficher_chemin(liste_aretes_augmentees);
-
+*/
 }
 
 Graphe lecture_graphe(std::ifstream& fichier)
@@ -158,15 +162,22 @@ Graphe lecture_graphe(std::ifstream& fichier)
 int main()
 {
     Graphe g;
+    // On ajoute les noeuds dans l'ordre afin de bien définir la matrice d'adjacence
+    g.ajouterSommet(1);
+    g.ajouterSommet(2);
+    g.ajouterSommet(3);
+    g.ajouterSommet(4);
+    g.ajouterSommet(5);
+
     // On ajoute des arêtes normales
     g.ajouterArete(1, 2, 1, true);
-    g.ajouterArete(2, 3);
-    g.ajouterArete(3, 4);
-    g.ajouterArete(4, 5);
-    g.ajouterArete(4, 2);
-    g.ajouterArete(5, 1);
+    g.ajouterArete(2, 3,1, true);
+    g.ajouterArete(3, 4,1, true);
+    g.ajouterArete(4, 5,1, true);
+    g.ajouterArete(4, 2,1, true);
+    g.ajouterArete(5, 1,1, true);
 
-    // g.afficher();
+    //g.afficherMatriceAdj();
     //test_graphe_eulerien(g);
     // test_augmente(g);
 
@@ -174,13 +185,22 @@ int main()
     GrapheAugmente ga = GrapheAugmente(g);
     ga.ajouterAreteAugmentee(2,3,1, true);
     ga.ajouterAreteAugmentee(3,4,1, true);
-    ga.ajouterAreteAugmentee(5,1,1, true);
+    ga.ajouterAreteAugmentee(4,2,1, true);
 
+    ga.ajouterAreteAugmentee(2,3,1, true);
+    ga.ajouterAreteAugmentee(3,4,1, true);
+    ga.ajouterAreteAugmentee(4,2,1, true);
+
+    ga.ajouterAreteAugmentee(2,3,1, true);
+
+    //ga.afficherListeSommets();
+    ga.afficherMatriceAdj();
     test_trouver_cycle(ga);
     
     // test eliminer cycle :
-    //test_eliminer_cycle_augmente(ga);
+    test_eliminer_cycle_augmente(ga);
     
+    /*
     // test de lecture
     std::ifstream fichier("..\\..\\extraction\\graphe.txt");
     Graphe g_read = lecture_graphe(fichier);
@@ -205,7 +225,10 @@ int main()
     GrapheAugmente enfant = croisement(ga, ga_bis);
     enfant.afficher();
     
-    std::cout << "FIN DU PROGRAMME" << std::endl;
 
+    test_eliminer_cycle_augmente(ga);
+*/
+    std::cout << "FIN DU PROGRAMME" << std::endl;
+    
     return 0;
 }

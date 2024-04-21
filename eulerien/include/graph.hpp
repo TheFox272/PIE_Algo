@@ -103,6 +103,8 @@ class Graphe
 
         // Méthode pour afficher le graphe (pour le debug)
         void afficher() const;
+        void afficherListeSommets() const;
+        void afficherMatriceAdj() const;
 
 };
 

@@ -174,6 +174,27 @@ void Graphe::afficher() const
     }
 }
 
+void Graphe::afficherListeSommets() const
+{
+    for(int sommet : m_listeSommet)
+    {
+        std::cout << sommet << ";";
+    }
+    std::cout << std::endl;
+}
+void Graphe::afficherMatriceAdj() const
+{
+    int n = m_matriceAdj.size();
+
+    for(int i = 0; i<n; ++i)
+    {
+        for(int j = 0; j<n; ++j)
+        {
+            std::cout << "(" << m_matriceAdj[i][j].first << "," << m_matriceAdj[i][j].second << ")" << " ";
+        }
+        std::cout << std::endl;
+    }
+}
 
 // CLASSE GrapheAugmente
 // Constructeurs

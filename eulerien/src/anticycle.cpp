@@ -16,21 +16,46 @@ bool noeud_dans_liste(int cible, std::vector<Arete> listeAretes)
     return false;
 }
 
-bool recursion_cycle(int noeud, std::vector<std::vector<double>> matrice_adjacence, std::vector<Arete>& chemin_courant,std::vector<bool>& visites)
+int trouver_correspondance(int noeud,std::vector<int> listeSommet)
 {
+    int taille_liste = listeSommet.size();
+    for(int i = 0; i<taille_liste; ++i)
+    {
+        if(listeSommet[i]==noeud)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+
+}
+
+bool recursion_cycle(int noeud, std::vector<std::vector<std::pair<int, int>>>& matrice_adjacence, std::vector<Arete>& chemin_courant,std::vector<bool>& visites,bool augmenteOnly)
+{
+    /*
+    Quelque chose n'est pas clair :
+    Un cycle de non-orientés, ok il faut éliminer.
+    Un cycle d'orientés, ok il faut éliminer.
+    Mais un mix ? Aucune idée.
+
+    A faire une fonction pour trouver cycle pour orientés et une autre pour non-orientés
+    */
     int n = matrice_adjacence[noeud].size();
 
     for(int j = 0; j<n; ++j)
         {
-            if(matrice_adjacence[noeud][j] != -1.0)
+            if(augmenteOnly)
+            {
+            if(matrice_adjacence[noeud][j].first > 0 && matrice_adjacence[noeud][j].second > 1)
             {
                 if(!visites[j])
                 {
                     visites[j] = true;
+                    Arete arete_ij = Arete(noeud, j, matrice_adjacence[noeud][j].first, true);
                     
-                    Arete arete_ij(noeud, j, matrice_adjacence[noeud][j], true);
                     chemin_courant.push_back(arete_ij);
-                    if(recursion_cycle(j, matrice_adjacence, chemin_courant, visites))
+                    if(recursion_cycle(j, matrice_adjacence, chemin_courant, visites, augmenteOnly))
                     {
                         return true;
                     }
@@ -41,7 +66,7 @@ bool recursion_cycle(int noeud, std::vector<std::vector<double>> matrice_adjacen
                 }
                 else
                 {
-                    Arete arete_ij(noeud, j, matrice_adjacence[noeud][j], true);
+                    Arete arete_ij(noeud, j, matrice_adjacence[noeud][j].first, true);
                     if(noeud_dans_liste(j, chemin_courant))
                     {
                         chemin_courant.push_back(arete_ij);
@@ -49,6 +74,38 @@ bool recursion_cycle(int noeud, std::vector<std::vector<double>> matrice_adjacen
                     }
                 }
                 
+            }
+            }
+            else
+            {
+                if(matrice_adjacence[noeud][j].first > 0)
+            {
+                if(!visites[j])
+                {
+                    visites[j] = true;
+
+                    Arete arete_ij(noeud, j, matrice_adjacence[noeud][j].second, true);
+                    chemin_courant.push_back(arete_ij);
+                    if(recursion_cycle(j, matrice_adjacence, chemin_courant, visites,augmenteOnly))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        chemin_courant.pop_back();
+                    }
+                }
+                else
+                {
+                    Arete arete_ij(noeud, j, matrice_adjacence[noeud][j].first, true);
+                    if(noeud_dans_liste(j, chemin_courant))
+                    {
+                        chemin_courant.push_back(arete_ij);
+                        return true;
+                    }
+                }
+                
+            }
             }
         }
 
@@ -68,7 +125,6 @@ std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly)
     int n = g.getNbSommet();
     std::vector<bool> visites(n,false);
 
-    std::vector<std::vector<double>> matrice_adjacence(n, std::vector<double>(n, -1.0));
     std::vector<Arete> listeAretes;
     if(augmenteOnly)
     {
@@ -77,14 +133,6 @@ std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly)
     else
     {
         listeAretes = g.getListeArete();
-    }
-    for(Arete arete : listeAretes)
-    {
-        double poids = arete.getPoids();
-        int noeud1 = arete.getSommet1();
-        int noeud2 = arete.getSommet2();
-
-        matrice_adjacence[noeud1][noeud2] = poids;
     }
     std::vector<int> liste_noeuds;
     int nb_sommet(0);
@@ -113,13 +161,22 @@ std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly)
     else
     {
         liste_noeuds = g.getListeSommet();
+        nb_sommet = liste_noeuds.size();
+    }
+
+    if(nb_sommet == 0)
+    {
+        return {};
     }
 
     int aleatoire_n = rand() % nb_sommet;
-    int noeud_depart = liste_noeuds[aleatoire_n];
-    visites[noeud_depart] = true;
 
-    bool existence_cycle = recursion_cycle(noeud_depart, matrice_adjacence, chemin_courant, visites);
+    int noeud_depart = liste_noeuds[aleatoire_n];
+    std::vector<int> listeSommet = g.getListeSommet();
+    int noeud_depart_correspondance = trouver_correspondance(noeud_depart, listeSommet);
+    visites[noeud_depart_correspondance] = true;
+    std::vector<std::vector<std::pair<int, int>>> matrice_adjacence = g.getMatriceAdj();
+    bool existence_cycle = recursion_cycle(noeud_depart_correspondance, matrice_adjacence, chemin_courant, visites, augmenteOnly);
     if(existence_cycle)
     {        
         Arete final = chemin_courant.back();
@@ -133,6 +190,13 @@ std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly)
             chemin_courant.erase(chemin_courant.begin() + i);
             ++i;
         }
+
+        int chemin_courant_taille = chemin_courant.size();
+        for(int i = 0; i<chemin_courant_taille; ++i)
+        {
+            Arete arete(listeSommet[chemin_courant[i].getSommet1()], listeSommet[chemin_courant[i].getSommet2()], chemin_courant[i].getPoids(), chemin_courant[i].getOriente());
+            chemin_courant[i] = arete;
+        }
         return chemin_courant;
     }
     else
@@ -142,37 +206,21 @@ std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly)
 }
 
 
-GrapheAugmente eliminer_cycle_augmente(GrapheAugmente g)
+void eliminer_cycles_augmentes(GrapheAugmente& g)
 {
     std::vector<Arete> cycle_augmente = trouver_cycle(g, true);
-    std::vector<Arete> aretes_augmente = g.getListeAreteAugmentee();
 
-    if(cycle_augmente.size() == 0)
+    while(cycle_augmente.size() != 0)
     {
-        return g;
-    }
-
-    for(Arete arete_cycle : cycle_augmente)
-    {
-        int n = aretes_augmente.size();
-        for(int i = 0; i<n; ++i)
+        for(Arete arete_cycle : cycle_augmente)
         {
-            if(arete_cycle == aretes_augmente[i])
-            {
-                aretes_augmente.erase(aretes_augmente.begin() + i);
-            }
-
+            g.supprimerAreteAugmentee(arete_cycle);
         }
-    }
-    
-    GrapheAugmente resultat((Graphe) g);
+        std::cout << std::endl;
 
-    for(Arete arete_augmente : aretes_augmente)
-    {
-        resultat.ajouterAreteAugmentee(arete_augmente);
+        cycle_augmente = trouver_cycle(g, true);
     }
-    
-    return resultat;
+
 }
 
 

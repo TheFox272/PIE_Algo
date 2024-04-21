@@ -4,12 +4,12 @@ INC = include/
 LIBS = -lm
 SRC = src/
 BUILD = build
-EXEC = main.exe
+EXEC = myMain.exe
 
 
 all: $(BUILD)/$(EXEC)
 
-$(BUILD)/$(EXEC): $(BUILD)/main.o $(BUILD)/eulerien.o $(BUILD)/genetic.o $(BUILD)/augmentation.o $(BUILD)/evolution.o $(BUILD)/graph.o
+$(BUILD)/$(EXEC): $(BUILD)/myMain.o $(BUILD)/eulerien.o $(BUILD)/genetic.o $(BUILD)/augmentation.o $(BUILD)/evolution.o $(BUILD)/graph.o $(BUILD)/anticycle.o
 	$(CC) $(CFLAGS) -g $^ -o $@ $(LIBS)
 
 $(BUILD)/%.o: $(SRC)%.cpp $(INC)%.hpp

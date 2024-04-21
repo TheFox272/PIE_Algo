@@ -116,8 +116,8 @@ void test_eliminer_cycle_augmente(GrapheAugmente ga)
     {
         std::cout << "Cycle a eliminer trouve :" << std::endl;
     }
-
-    GrapheAugmente ga_modifie = eliminer_cycle_augmente(ga);
+    /*
+    GrapheAugmente ga_modifie = eliminer_cycles_augmentes(ga);
     std::vector<Arete> liste_aretes = ga_modifie.getListeArete();
 
     std::cout << "Liste aretes : " << std::endl;
@@ -126,7 +126,7 @@ void test_eliminer_cycle_augmente(GrapheAugmente ga)
     std::cout << "Liste aretes augmentees : " << std::endl;
     std::vector<Arete> liste_aretes_augmentees = ga_modifie.getListeAreteAugmentee();
     afficher_chemin(liste_aretes_augmentees);
-
+    */
 }
 
 Graphe lecture_graphe(std::ifstream& fichier)
