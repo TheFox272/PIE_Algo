@@ -17,6 +17,10 @@ bool noeud_dans_liste(int cible, std::vector<Arete> listeAretes)
 }
 
 int trouver_correspondance(int noeud,std::vector<int> listeSommet)
+/*
+    Fonction qui permet de trouver le noeud réel du graphe à partir d'un
+    numéroté comme dans listeSommet (qui ne sert que pour la matrice d'adjacence)
+*/
 {
     int taille_liste = listeSommet.size();
     for(int i = 0; i<taille_liste; ++i)
@@ -173,9 +177,14 @@ std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly)
 
     int noeud_depart = liste_noeuds[aleatoire_n];
     std::vector<int> listeSommet = g.getListeSommet();
+
+    // On cherche la correspondance avec la liste de sommet de la matrice d'adjacence.
     int noeud_depart_correspondance = trouver_correspondance(noeud_depart, listeSommet);
+
     visites[noeud_depart_correspondance] = true;
     std::vector<std::vector<std::pair<int, int>>> matrice_adjacence = g.getMatriceAdj();
+
+    // Attention : les noeuds du cycle sont numérotés comme dans listeSommet. Il faudra les convertir plus tard (voir ci-dessous)
     bool existence_cycle = recursion_cycle(noeud_depart_correspondance, matrice_adjacence, chemin_courant, visites, augmenteOnly);
     if(existence_cycle)
     {        
@@ -191,6 +200,7 @@ std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly)
             ++i;
         }
 
+        // On convertit les sommets du cycle (numéroté comme dans listeSommet) en ceux originels.
         int chemin_courant_taille = chemin_courant.size();
         for(int i = 0; i<chemin_courant_taille; ++i)
         {
