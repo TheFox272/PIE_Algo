@@ -43,7 +43,14 @@ bool recursion_cycle(int noeud, std::vector<std::vector<std::pair<int, int>>>& m
     Un cycle d'orientés, ok il faut éliminer.
     Mais un mix ? Aucune idée.
 
-    A faire une fonction pour trouver cycle pour orientés et une autre pour non-orientés
+    Pour l'instant :
+    On élimine quelque soit l'orientation de l'arète.
+    Ce ne sera pas un soucis car on utilisera que des aretes augmentés orientés.
+
+    L'erreur semble être est dans l'article utilisé
+    "Genetic Algorithm for Mixed Chinese Postman Problem"
+
+    Il faudrait contacter les auteurs pour en avoir le coeur net.
     */
     int n = matrice_adjacence[noeud].size();
 
@@ -51,6 +58,7 @@ bool recursion_cycle(int noeud, std::vector<std::vector<std::pair<int, int>>>& m
         {
             if(augmenteOnly)
             {
+                // on vérifie que l'arète est augmenté
             if(matrice_adjacence[noeud][j].first > 0 && matrice_adjacence[noeud][j].second > 1)
             {
                 if(!visites[j])
