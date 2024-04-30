@@ -181,7 +181,7 @@ std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly)
         return {};
     }
 
-    int aleatoire_n = rand() % nb_sommet;
+    int aleatoire_n = std::rand() % nb_sommet;
 
     int noeud_depart = liste_noeuds[aleatoire_n];
     std::vector<int> listeSommet = g.getListeSommet();
@@ -199,14 +199,15 @@ std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly)
         Arete final = chemin_courant.back();
         
         int sommet_final = final.getSommet2();
-        
+        std::cout << "final : " << sommet_final << "\n";
         int i = 0;
             
         while(chemin_courant[i].getSommet1() != sommet_final)
         {
-            chemin_courant.erase(chemin_courant.begin() + i);
             ++i;
         }
+
+        chemin_courant.erase(chemin_courant.begin(), chemin_courant.begin() + i);
 
         // On convertit les sommets du cycle (numéroté comme dans listeSommet) en ceux originels.
         int chemin_courant_taille = chemin_courant.size();
@@ -236,6 +237,7 @@ void eliminer_cycles_augmentes(GrapheAugmente& g)
         }
         std::cout << std::endl;
 
+        afficher_chemin(cycle_augmente);
         cycle_augmente = trouver_cycle(g, true);
     }
 

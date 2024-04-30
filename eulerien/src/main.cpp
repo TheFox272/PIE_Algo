@@ -20,7 +20,7 @@ void test_mutation(GrapheAugmente g)
 // Test recherche de chemin eulérien
 void test_graphe_eulerien(Graphe g)
 {
-    GrapheAugmente ga = generer_graphe_eulerien(g, 5, 20, 0.6, 0.7);
+    GrapheAugmente ga = generer_graphe_eulerien(g, 5, 1, 0.6, 0.7);
     ga.afficher();
 
     std::vector<int> chemin = hierholzer(ga, 1);
@@ -107,15 +107,8 @@ void test_trouver_cycle(GrapheAugmente ga)
 
 void test_eliminer_cycle_augmente(GrapheAugmente ga)
 {
-    std::vector<Arete> cycle_augmente = trouver_cycle(ga,true);
-    if(cycle_augmente.size() == 0)
-    {
-        std::cout << "Pas de cycle a eliminer trouve" << std::endl;
-    }
-    else
-    {
-        std::cout << "Cycle a eliminer trouve :" << std::endl;
-    }
+    eliminer_cycles_augmentes(ga);
+    ga.afficher();
     /*
     GrapheAugmente ga_modifie = eliminer_cycles_augmentes(ga);
     std::vector<Arete> liste_aretes = ga_modifie.getListeArete();
@@ -173,7 +166,15 @@ int main()
     g.ajouterArete(4, 2);
     g.ajouterArete(5, 1);
 
-    
+    GrapheAugmente ga(g);
+
+    ga.ajouterAreteAugmentee(2, 4, 1, true);
+    ga.ajouterAreteAugmentee(1, 2, 1, true);
+    ga.ajouterAreteAugmentee(4, 5, 1, true);
+    ga.ajouterAreteAugmentee(5, 1, 1, true);
+    ga.ajouterAreteAugmentee(4, 2, 1, true);
+
+    test_eliminer_cycle_augmente(ga);
 
     return 0;
 }

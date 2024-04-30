@@ -3,6 +3,7 @@
 #include "graph.hpp"
 #include "augmentation.hpp"
 #include "evolution.hpp"
+#include "anticycle.hpp"
 
 #include <cmath>
 #include <random>

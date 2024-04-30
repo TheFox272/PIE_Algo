@@ -37,16 +37,16 @@ std::vector<int> cycle_depuis(std::vector<Arete> &aretes, int sommet_depart)
     // On commence par trouver un cycle quelconque partant du sommet de départ
     do
     {
-        std::cout << sommet_courant << "   ";
-        afficher_chemin(aretes);
-        // on affiche le cycle
-        std::cout << "cycle : ";
-        for (size_t i = 0; i < cycle.size(); i++)
-        {
-            std::cout << cycle[i] << "->";
-        }
-        std::cout << std::endl;
-        std::cout << std::endl;
+        // std::cout << sommet_courant << "   ";
+        // afficher_chemin(aretes);
+        // // on affiche le cycle
+        // std::cout << "cycle : ";
+        // for (size_t i = 0; i < cycle.size(); i++)
+        // {
+        //     std::cout << cycle[i] << "->";
+        // }
+        // std::cout << std::endl;
+        // std::cout << std::endl;
         i_arete_courante = trouver_arete_partante_aleatoire(aretes, sommet_courant, true);
         if (i_arete_courante == -1)
             i_arete_courante = trouver_arete_partante_aleatoire(aretes, sommet_courant, false);

@@ -75,7 +75,10 @@ std::vector<GrapheAugmente> reproduction(const std::vector<GrapheAugmente>& pop,
     }
 
     // Eliminer cycles
-    // WIP...
+    for (int i = 0; i < taille_reproduction; i++)
+    {
+        eliminer_cycles_augmentes(pop_reproduction[i]);
+    }
 
     return pop_reproduction;
 }
