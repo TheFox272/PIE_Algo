@@ -4,5 +4,5 @@
 
 /*----------------------------------------------------------------------------------------------------*/
 
-GrapheAugmente augmente(const Graphe g, const unsigned int graine, std::vector<Arete> AreteAugmentees=std::vector<Arete>());
+GrapheAugmente augmente(const Graphe g, const unsigned int graine, std::vector<Arete> AreteAugmentees={});
 

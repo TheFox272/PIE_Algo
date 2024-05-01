@@ -199,7 +199,7 @@ std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly)
         Arete final = chemin_courant.back();
         
         int sommet_final = final.getSommet2();
-        std::cout << "final : " << sommet_final << "\n";
+        std::cout << "final : " << listeSommet[sommet_final] << "\n";
         int i = 0;
             
         while(chemin_courant[i].getSommet1() != sommet_final)
@@ -227,6 +227,7 @@ std::vector<Arete> trouver_cycle(GrapheAugmente g, bool augmenteOnly)
 
 void eliminer_cycles_augmentes(GrapheAugmente& g)
 {
+    g.afficher();
     std::vector<Arete> cycle_augmente = trouver_cycle(g, true);
 
     while(cycle_augmente.size() != 0)

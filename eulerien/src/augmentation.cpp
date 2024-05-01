@@ -26,7 +26,7 @@ GrapheAugmente augmente(const Graphe g, const unsigned int graine, std::vector<A
 
     std::vector<int> listeSommet = g.getListeSommet();
     int rand_vstart = std::rand() % listeSommet.size();
-    // On s'assure que vhend != vstart
+    // On s'assure que vend != vstart
     int rand_vend = (rand_vstart + (std::rand() % (listeSommet.size() - 1)) + 1) % listeSommet.size();
 
     int vstart = listeSommet[rand_vstart];
@@ -68,12 +68,17 @@ GrapheAugmente augmente(const Graphe g, const unsigned int graine, std::vector<A
             x = arete_choisie.getSommet1();
         }
 
-        std::vector<Arete> cheminHead = trouver_chemin_aleatoire(ga, vhead, x, false);
+        std::vector<Arete> cheminHead;
+        if (x == arete_choisie.getSommet2())
+            cheminHead = {arete_choisie};
+        else
+            cheminHead = trouver_chemin_aleatoire(ga, vhead, x, false);
 
         // Si le chemin termine déjà par l'arête choisie, on ne la rajoute pas (on évite un allez-retour inutile)
         if(cheminHead.back() != arete_choisie){
-            cheminHead.push_back(arete_choisie);
             vhead = arete_choisie.sommetOppose(x);
+            Arete arete_temp(x, vhead, arete_choisie.getPoids(), true);
+            cheminHead.push_back(arete_temp);
         }
         else
         {
@@ -90,7 +95,7 @@ GrapheAugmente augmente(const Graphe g, const unsigned int graine, std::vector<A
         cheminEulerien.push_back(arete_chemin);
     }
 
-    // On ajoute les arêtes augmentées (ou l'on passe plusieurs fois)
+    // On ajoute les arêtes augmentées (où l'on passe plusieurs fois)
     for(size_t i=0 ; i < cheminEulerien.size() ; i++)
     {
         for(size_t j=i+1 ; j < cheminEulerien.size() ; j++)
@@ -103,7 +108,7 @@ GrapheAugmente augmente(const Graphe g, const unsigned int graine, std::vector<A
         }
     }
 
-    ga.setCheminEulerien(cheminEulerien);
+    ga.setCheminEulerien(cheminEulerien);  // inutile ?
 
     return ga;
 }

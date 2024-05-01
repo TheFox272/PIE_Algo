@@ -323,6 +323,7 @@ void GrapheAugmente::afficher() const
             std::cout << " non orientée" << std::endl;
         }
     }
+
     if (m_nbAreteAugmente == 0)
         std::cout << "Aucune (graphe déjà eulérien ?)" << std::endl;
 }
