@@ -20,7 +20,7 @@ void test_mutation(GrapheAugmente g)
 // Test recherche de chemin eulérien
 void test_graphe_eulerien(Graphe g)
 {
-    GrapheAugmente ga = generer_graphe_eulerien(g, 5, 20, 0.6, 0.5);
+    GrapheAugmente ga = generer_graphe_eulerien(g, 5, 20, 1.0, 0.5);
     ga.afficher();
 
     std::vector<int> chemin = hierholzer(ga, 1);
@@ -155,26 +155,58 @@ Graphe lecture_graphe(std::ifstream& fichier)
     return g;
 }
 
+Graphe generer_graphe(int nbAretes=10, int sommetMax=10){
+    // On initialise random
+    std::srand(unsigned(std::time(0)));
+
+    Graphe g;
+    int n = 0;
+    std::vector<int> liste_sommets;
+
+    // ajout de l'arête initiale
+    g.ajouterArete(1, 2, 1, false);
+    liste_sommets.push_back(1);
+    liste_sommets.push_back(2);
+
+    while (n < nbAretes-1)
+    {
+        int isommet1 = std::rand() % liste_sommets.size();
+        int sommet1 = liste_sommets[isommet1];
+        int sommet2 = 1 + std::rand() % sommetMax;
+        Arete arete(sommet1, sommet2, 1, false);
+        std::vector<Arete> liste_aretes = g.getListeArete();
+        if (sommet1 != sommet2 && std::find(liste_aretes.begin(), liste_aretes.end(), arete) == liste_aretes.end())
+        {
+            g.ajouterArete(arete);
+            if (std::find(liste_sommets.begin(), liste_sommets.end(), sommet2) == liste_sommets.end())
+            {
+                liste_sommets.push_back(sommet2);
+            }
+            n++;
+        }
+    }
+    return g;
+}
+
 int main()
 {
-    Graphe g;
-    // On ajoute des arêtes normales
-    g.ajouterArete(1, 2, 1, true);
-    g.ajouterArete(2, 3);
-    g.ajouterArete(3, 4);
-    g.ajouterArete(4, 5);
-    g.ajouterArete(4, 2);
-    g.ajouterArete(5, 1);
+    Graphe g = generer_graphe(15, 20);   
+    // Graphe g;
 
-    GrapheAugmente ga(g);
+    // g.ajouterArete(1, 2);
+    // g.ajouterArete(3, 2, 1, true);
+    // g.ajouterArete(2, 4);
+    // g.ajouterArete(1, 3);
+    // g.ajouterArete(3, 4);
 
-    ga.ajouterAreteAugmentee(3, 4, 1, true);
-    ga.ajouterAreteAugmentee(4, 2, 1, true);
-    ga.ajouterAreteAugmentee(2, 3, 1, true);
-    ga.ajouterAreteAugmentee(2, 4, 1, true);
-    // ga.ajouterAreteAugmentee(4, 5, 1, true);
-    // ga.ajouterAreteAugmentee(5, 1, 1, true);
-    // ga.ajouterAreteAugmentee(4, 2, 1, true);
+    // GrapheAugmente ga(g);
+
+    // ga.ajouterAreteAugmentee(3, 2, 1, true);
+
+    // test_hierholzer(ga);
+
+    // Affichage du graphe généré
+    g.afficher();
 
     test_graphe_eulerien(g);
 

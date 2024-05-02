@@ -98,6 +98,7 @@ class Graphe
 
         // Méthode pour ajouter une arête
         void ajouterArete(int sommet1, int sommet2, int poids=1, bool oriente=false);
+        void ajouterArete(Arete arete);
         // Méthode pour ajouter un sommet
         void ajouterSommet(int sommet);
 

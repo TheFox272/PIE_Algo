@@ -27,11 +27,8 @@ std::vector<GrapheAugmente> init_population(const Graphe g, const int taille_pop
 
 /*----------------------------------------------------------------------------------------------------*/
 
-std::vector<GrapheAugmente> selection(const std::vector<GrapheAugmente>& pop, const int taille_pop, const double taux_selection)
+std::vector<GrapheAugmente> selection(const std::vector<GrapheAugmente>& pop, const int taille_selection)
 {
-    // On arrondit à l'inférieur la taille de la sélection. On arrondira au supérieur pour la reproduction, afin de toujours avoir une variation de la population.
-    const int taille_selection = static_cast<int>(std::floor(taille_pop * taux_selection));
-
     std::vector<GrapheAugmente> pop_copie = pop;
     std::partial_sort(pop_copie.begin(), pop_copie.begin() + taille_selection, pop_copie.end(), comparer);
 
@@ -49,12 +46,10 @@ GrapheAugmente selection_aleatoire(const std::vector<GrapheAugmente>& pop, const
     return pop[index];
 }
 
-std::vector<GrapheAugmente> reproduction(const std::vector<GrapheAugmente>& pop, const int taille_pop, const double taux_reproduction, const double taux_mutation)
+std::vector<GrapheAugmente> reproduction(const std::vector<GrapheAugmente>& pop, const int taille_pop, const int taille_evolution, const double taux_mutation)
 {
-    // On arrondit au supérieur la taille de la reproduction, afin de toujours avoir une variation de la population.
-    const int taille_reproduction = static_cast<int>(std::ceil(taille_pop * taux_reproduction));
-    const int taille_mutation = static_cast<int>(std::ceil(taille_reproduction * taux_mutation));
-    const int taille_croisement = taille_reproduction - taille_mutation;
+    const int taille_mutation = static_cast<int>(std::ceil(taille_evolution * taux_mutation));
+    const int taille_croisement = taille_evolution - taille_mutation;
 
     std::vector<GrapheAugmente> pop_reproduction;
 
@@ -75,7 +70,7 @@ std::vector<GrapheAugmente> reproduction(const std::vector<GrapheAugmente>& pop,
     }
 
     // Eliminer cycles
-    for (int i = 0; i < taille_reproduction; i++)
+    for (int i = 0; i < taille_evolution; i++)
     {
         eliminer_cycles_augmentes(pop_reproduction[i]);
     }
@@ -85,14 +80,18 @@ std::vector<GrapheAugmente> reproduction(const std::vector<GrapheAugmente>& pop,
 
 /*----------------------------------------------------------------------------------------------------*/
 
-std::vector<GrapheAugmente> evolution(const Graphe g, const int taille_pop, const int nb_gen, const double taux_reproduction, const double taux_mutation)
+std::vector<GrapheAugmente> evolution(const Graphe g, const int taille_pop, const int nb_gen, const double taux_selection, const double taux_mutation)
 {
     std::vector<GrapheAugmente> pop = init_population(g, taille_pop);
 
+    // On arrondit à l'inférieur la taille de la sélection. On arrondira au supérieur pour la reproduction, afin de toujours avoir une variation de la population.
+    const int taille_selection = static_cast<int>(std::floor(taille_pop * taux_selection));
+    const int taille_evolution = taille_pop - taille_selection;
+
     for (int i = 0; i < nb_gen; i++)
     {
-        std::vector<GrapheAugmente> pop_selection = selection(pop, taille_pop, 1-taux_reproduction);
-        std::vector<GrapheAugmente> pop_reproduction = reproduction(pop, taille_pop, taux_reproduction, taux_mutation);
+        std::vector<GrapheAugmente> pop_selection = selection(pop, taille_selection);
+        std::vector<GrapheAugmente> pop_reproduction = reproduction(pop, taille_pop, taille_evolution, taux_mutation);
 
         pop = pop_selection;
         pop.insert(pop.end(), pop_reproduction.begin(), pop_reproduction.end());
@@ -106,9 +105,9 @@ std::vector<GrapheAugmente> evolution(const Graphe g, const int taille_pop, cons
 
 /*----------------------------------------------------------------------------------------------------*/
 
-GrapheAugmente generer_graphe_eulerien(const Graphe g, const int taille_pop, const int nb_gen, const double taux_reproduction, const double taux_mutation)
+GrapheAugmente generer_graphe_eulerien(const Graphe g, const int taille_pop, const int nb_gen, const double taux_selection, const double taux_mutation)
 {
-    std::vector<GrapheAugmente> pop = evolution(g, taille_pop, nb_gen, taux_reproduction, taux_mutation);
+    std::vector<GrapheAugmente> pop = evolution(g, taille_pop, nb_gen, taux_selection, taux_mutation);
     std::sort(pop.begin(), pop.end(), comparer);
     return pop[0];
 }
