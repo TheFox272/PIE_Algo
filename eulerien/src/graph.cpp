@@ -148,6 +148,11 @@ void Graphe::ajouterArete(int sommet1, int sommet2, int poids, bool oriente)
     }
 }
 
+void Graphe::ajouterArete(Arete arete)
+{
+    ajouterArete(arete.getSommet1(), arete.getSommet2(), arete.getPoids(), arete.getOriente());
+}
+
 void Graphe::afficher() const
 {
     std::cout << "Nombre de sommets : " << m_nbSommet << std::endl;

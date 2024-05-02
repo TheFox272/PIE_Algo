@@ -101,7 +101,22 @@ GrapheAugmente mutation_1(const GrapheAugmente g)
 
 GrapheAugmente mutation_2(const GrapheAugmente g)
 {
-    return g;
+    GrapheAugmente res = g;
+    int i_arete = std::rand() % res.getListeAreteAugmentee().size();
+    Arete arete = res.getListeAreteAugmentee()[i_arete];
+    res.supprimerAreteAugmentee(arete);
+    res.ajouterAreteAugmentee(-arete);
+
+    std::vector<Arete> chemin_1 = trouver_chemin_aleatoire(g, arete.getSommet1(), arete.getSommet2(), false);
+    std::vector<Arete> chemin_2 = trouver_chemin_aleatoire(g, arete.getSommet1(), arete.getSommet2(), false);
+
+    for (size_t i = 0 ; i < chemin_1.size() ; i++)
+        res.ajouterAreteAugmentee(chemin_1[i]);
+    
+    for (size_t i = 0 ; i < chemin_2.size() ; i++)
+        res.ajouterAreteAugmentee(chemin_2[i]);
+
+    return res;
 }
 
 /*----------------------------------------------------------------------------------------------------*/
