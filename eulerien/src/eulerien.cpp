@@ -124,7 +124,7 @@ std::vector<int> hierholzer(GrapheAugmente &g, int sommet_depart)
         }
         cycle = cycle_depuis(aretes, sommet_depart);
         auto it = std::find(chemin.begin(), chemin.end(), sommet_depart);
-        chemin.insert(it, cycle.begin(), cycle.end());
+        chemin.insert(it, cycle.begin(), cycle.end()-1);
     }
     
     return chemin;
