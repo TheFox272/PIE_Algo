@@ -202,9 +202,9 @@ GrapheAugmente::GrapheAugmente(): Graphe(), m_nbAreteAugmente(0), m_poidsTotAugm
 GrapheAugmente::GrapheAugmente(Graphe g): Graphe(g), m_nbAreteAugmente(0), m_poidsTotAugmente(0) {}
 GrapheAugmente::GrapheAugmente(GrapheAugmente const &g, bool copieAreteAugmente): Graphe(g)
 {
+    m_listeAreteAugmente = g.m_listeAreteAugmente;
     if (copieAreteAugmente)
     {
-        m_listeAreteAugmente = g.m_listeAreteAugmente;
         m_nbAreteAugmente = g.m_nbAreteAugmente;
         m_poidsTotAugmente = g.m_poidsTotAugmente;
     }
@@ -212,7 +212,13 @@ GrapheAugmente::GrapheAugmente(GrapheAugmente const &g, bool copieAreteAugmente)
     {
         m_nbAreteAugmente = 0;
         m_poidsTotAugmente = 0;
+        // on supprime les arêtes augmentées
+        for (Arete arete : g.getListeAreteAugmentee())
+        {
+            supprimerAreteAugmentee(arete);
+        }
     }
+
 }
 
 // Destructeur
@@ -275,6 +281,9 @@ void GrapheAugmente::supprimerAreteAugmentee(Arete arete)
 
         return;
     }
+
+    // debug
+    std::cout << "arete non trouvee " << arete.getSommet1() << "->" << arete.getSommet2() << " " << arete.getPoids() << std::endl;
 
     // Si l'arête n'a pas été trouvée, on lève une exception
     throw std::invalid_argument("L'arête n'a pas été trouvée dans la liste des arêtes augmentées");

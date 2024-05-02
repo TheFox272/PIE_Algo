@@ -66,9 +66,8 @@ GrapheAugmente mutation_1(const GrapheAugmente g)
 
                 int prochain_sommet = aretes[j].sommetOppose(sommet_arrive);
                 Arete nouvelleArete(sommet_arrive, prochain_sommet, aretes[j].getPoids(), aretes[j].getOriente());
-                sommet_arrive = prochain_sommet;
-
                 chemin.push_back(nouvelleArete);
+                sommet_arrive = prochain_sommet;
 
                 aretes.erase(aretes.begin() + j);
                 break;
@@ -138,7 +137,11 @@ GrapheAugmente croisement(const GrapheAugmente g1, const GrapheAugmente g2)
         }
     }
 
-    res = augmente(res, rand(), res.getListeAreteAugmentee());
+    std::vector<Arete> aretesAugmentees = res.getListeAreteAugmentee();
+    for (size_t i = 0 ; i < aretesAugmentees.size() ; i++){
+        res.supprimerAreteAugmentee(aretesAugmentees[i]);
+    }
+    res = augmente(res, rand(), aretesAugmentees);
 
     return res;
 }

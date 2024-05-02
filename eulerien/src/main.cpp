@@ -20,7 +20,7 @@ void test_mutation(GrapheAugmente g)
 // Test recherche de chemin eulérien
 void test_graphe_eulerien(Graphe g)
 {
-    GrapheAugmente ga = generer_graphe_eulerien(g, 5, 1, 0.6, 0.0);
+    GrapheAugmente ga = generer_graphe_eulerien(g, 5, 20, 0.6, 0.5);
     ga.afficher();
 
     std::vector<int> chemin = hierholzer(ga, 1);
@@ -168,11 +168,13 @@ int main()
 
     GrapheAugmente ga(g);
 
-    ga.ajouterAreteAugmentee(2, 4, 1, true);
-    ga.ajouterAreteAugmentee(1, 2, 1, true);
-    ga.ajouterAreteAugmentee(4, 5, 1, true);
-    ga.ajouterAreteAugmentee(5, 1, 1, true);
+    ga.ajouterAreteAugmentee(3, 4, 1, true);
     ga.ajouterAreteAugmentee(4, 2, 1, true);
+    ga.ajouterAreteAugmentee(2, 3, 1, true);
+    ga.ajouterAreteAugmentee(2, 4, 1, true);
+    // ga.ajouterAreteAugmentee(4, 5, 1, true);
+    // ga.ajouterAreteAugmentee(5, 1, 1, true);
+    // ga.ajouterAreteAugmentee(4, 2, 1, true);
 
     test_graphe_eulerien(g);
 

@@ -9,11 +9,19 @@ void update(std::vector<Arete>& chemin, std::vector<Arete>& aretesRestantes, std
         auto iArete = std::find(aretesRestantes.begin(), aretesRestantes.end(), arete);
         if(iArete != aretesRestantes.end())
             aretesRestantes.erase(iArete);
+        
+        //debug
+        if (!arete.getOriente())
+        {
+            afficher_chemin(chemin);
+            throw std::runtime_error("Erreur : l'arête n'est pas orientée");
+        }
+
         cheminEulerien.push_back(arete);
     }
 }
 
-GrapheAugmente augmente(const Graphe g, const unsigned int graine, std::vector<Arete> AreteAugmentees)
+GrapheAugmente augmente(const Graphe g, const unsigned int graine, std::vector<Arete> areteAugmentees)
 {
     // On initialise le générateur de nombres aléatoires avec la graine
     std::srand(graine);
@@ -34,7 +42,7 @@ GrapheAugmente augmente(const Graphe g, const unsigned int graine, std::vector<A
     int x;
 
     std::vector<Arete> aretesRestantes = g.getListeArete();
-    aretesRestantes.insert(aretesRestantes.end(), AreteAugmentees.begin(), AreteAugmentees.end());
+    aretesRestantes.insert(aretesRestantes.end(), areteAugmentees.begin(), areteAugmentees.end());
     std::vector<Arete> cheminEulerien;
     GrapheAugmente ga(g);
 
@@ -69,8 +77,10 @@ GrapheAugmente augmente(const Graphe g, const unsigned int graine, std::vector<A
         }
 
         std::vector<Arete> cheminHead;
-        if (x == arete_choisie.getSommet2())
-            cheminHead = {arete_choisie};
+        if (x == arete_choisie.getSommet2()){
+            Arete arete_temp(vhead, x, arete_choisie.getPoids(), true);
+            cheminHead = {arete_temp};
+        }
         else
             cheminHead = trouver_chemin_aleatoire(ga, vhead, x, false);
 
