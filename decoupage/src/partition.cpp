@@ -92,16 +92,10 @@ namespace fs = std::filesystem;
 vector<vector<float>> dijkstra(vector<vector<int>> matrice, vector<int> departs, int n, int k)
 {
     vector<vector<float>> distances(n*k);
-    for (int i=0; i<k; i++) /*Initialisation à 0 des distances des k points de départ à eux-mêmes*/
+    for (int i=0; i<k; i++)
     {
         fill(distances[i].begin(), distances[i].end(), numeric_limits<float>::infinity()); /*Initialisation des distances aux k points de départ*/
-
-    }
-
-    fill(distances.begin(), distances.end(), numeric_limits<float>::infinity()); /*Initialisation des distances aux k points de départ*/
-    for (int i=0; i<k; i++) /*Initialisation à 0 des distances des k points de départ à eux-mêmes*/
-    {
-        distances[n][departs[i]]=0;
+        distances[n][departs[i]]=0; /*Initialisation à 0 des distances des k points de départ à eux-mêmes*/
     }
     for (int i=0; i<k;i++)
     {
